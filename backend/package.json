@@ -1,0 +1,36 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "description": "ecommerce rest api",
+  "main": "server.js",
+  "scripts": {
+    "start": "server.js",
+    "server": "nodemon server.js",
+    "client": "npm run dev  --prefix C:/Users/Abdullah/Desktop/react/ecommercessite/frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "proxy": "http://192.168.43.198:5174"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "Abdullah Abdul Rehman",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.22.20",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
+    "axios": "^1.6.7",
+    "bcrypt": "^5.1.1",
+    "colors": "^1.4.0",
+    "concurrently": "^8.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "env": "^0.0.2",
+    "express": "^4.18.2",
+    "express-formidable": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1",
+    "slugify": "^1.6.6"
+  }
+}
