@@ -28,13 +28,11 @@ router.get("/user-auth", requireSignin, (req, res) => {
   // res.status(401).json({ok: false , message: "Protected not route for a user" });
 });
 router.get("/admin-auth", requireSignin, isAdmin, (req, res) => {
-  res
-    .status(200)
-    .json({
-      success: true,
-      user: req.decoded,
-      message: "Protected route for a user",
-    });
+  res.status(200).json({
+    success: true,
+    user: req.decoded,
+    message: "Protected route for a user",
+  });
   // } else res.status(44).json({ success: false });
 });
 router.post("/forgot-password", forgotPasswordController);

@@ -41,7 +41,7 @@ const ForgotPassword = () => {
     };
     try {
       const res = await axios.post(
-        `${url}/forgot-password`,
+        `${url}/auth/forgot-password`,
         formData
       );
       if (res && res.data) {

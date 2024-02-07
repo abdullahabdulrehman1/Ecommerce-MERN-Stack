@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MdShoppingCart } from "react-icons/md";
 // import {AiOutlineLogin} from 'react-icons/md'
 import { AiOutlineLogin } from "react-icons/ai";
@@ -13,12 +13,17 @@ import { useAuth } from "../../context/authRoute";
 const Header = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
 
-  // const {  token,role,auth } = useStateContext();
-  // const dispatch = useDispatchContext();
-  // const userstringify = JSON.stringify(user);
-
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setisloggedin(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, [setisloggedin]);
   const handlelogout = () => {
-  
     // localStorage.removeItem("user");
     localStorage.removeItem("token");
 
@@ -92,6 +97,7 @@ const Header = () => {
                   Cart
                 </a>
               </li>
+              {/* {console.log(isloggedin)} */}
               {!isloggedin ? (
                 <>
                   {" "}

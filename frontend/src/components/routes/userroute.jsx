@@ -23,7 +23,7 @@ const UserRoute = () => {
         if (token) {
           axios.defaults.headers.common["Authorization"] = token;
 
-          const res = await axios.get(`${url}/user-auth`)
+          const res = await axios.get(`${url}/auth/user-auth`)
           setauthuser(res.data.user);
           setisloggedin(true);
           console.log(res.data);

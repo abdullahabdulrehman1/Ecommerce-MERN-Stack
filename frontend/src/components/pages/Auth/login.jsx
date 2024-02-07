@@ -9,6 +9,7 @@ import axios from "axios";
 import { Toast } from "flowbite-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../context/authRoute";
+import url from "../../../utils/exporturl";
 const Login = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
 
@@ -40,7 +41,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post("http://192.168.1.33:5174/login", formData);
+      const res = await axios.post(`${url}/auth/login`, formData);
       // <Spinners />
       if (res && res.data.success === true) {
         setError(`${res.data.message}`);

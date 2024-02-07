@@ -7,7 +7,7 @@ import {
   updateCategoryController,
   getSingleCategoryController,
   getAllCategoryController,
-  deleteCategoryController
+  deleteCategoryController,
 } from "../controller/categoryController.js";
 const router = express.Router();
 router.post(

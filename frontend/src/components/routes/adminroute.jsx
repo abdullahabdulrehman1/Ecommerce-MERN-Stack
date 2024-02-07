@@ -25,10 +25,10 @@ const AdminRoute = () => {
 
         if (token) {
           axios.defaults.headers.common["Authorization"] = token;
-          const res = await axios.get(`${url}/admin-auth`);
+          const response = await axios.get(`${url}/auth/admin-auth`);
 
-          if (res.data.success == true) {
-            setauthuser(res.data.user);
+          if (response.data.success == true) {
+            setauthuser(response.data.user);
             setsuccess(true);
           } else {
             // The token is invalid, remove it from local storage

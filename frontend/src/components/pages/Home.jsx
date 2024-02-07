@@ -4,6 +4,8 @@ import { useAuth, } from "../../context/authRoute";
 import Layout from "../layout/layout";
 import React, { useEffect, useState } from "react";
 import { stringify } from "postcss";
+import url from "../../utils/exporturl";
+// import url from "../../utils/exporturl";
 // import { useAuth } from "../../context/authRoute";
 // import { useAuth } from "../../context/authRoute";
 const Home = () => {
@@ -14,48 +16,28 @@ const Home = () => {
   const [success, setsuccess] = useState(false);
   console.log(isloggedin);
   console.log(authuser);
+  const AuthCheck=async()=>{
+    if(token){
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.get(`${url}/auth/user-auth`);
+      if(response.data.success === true){
+        setauthuser(response.data.user);
+        setisloggedin(true);
+        setsuccess(true);
+    }
+    if(response.data.success === false){
+      localStorage.removeItem("token");
+      setsuccess(false);
+      setisloggedin(false);
+    }
+  }
+  }
+ 
+  
   useEffect(() => {
-    const Authcheck = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        setLoading(true);
-       
-        if (token) {
-          axios.defaults.headers.common["Authorization"] = token;
+  AuthCheck();
+  }, []);
 
-          const res = await axios.get("http://192.168.1.33:5174/user-auth")
-          setauthuser(res.data.user);
-          setisloggedin(true);
-          console.log(res.data);
-          console.log(res.data.message);
-          console.log(res.data.success);
-          console.log(res.data)
-          if (res.data.success === true ) {
-            setsuccess(true); 
-          } else {
-            localStorage.removeItem("token");
-            setsuccess(false);
-              
-            // localStorage.removeItem('user');
-          }
-          
-         
-            // setsuccess(false);
-          
-        }
-      } catch (err) {
-        if (err.response && err.response.data.success === false) {
-          localStorage.removeItem("token");
-          setsuccess(false);
-        }
-      } finally {
-     
-        // setLoading(false);
-      }
-    };
-    Authcheck();
-  }, [setauthuser,  setisloggedin,success,token]);
-  // constuser = JSON.stringify(authuser)
   const [seconds, setSeconds] = useState(authuser ? authuser.iat : 0);
   
   useEffect(() => {

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import slugify from "slugify";
 import express from "express";
 import formidable from "express-formidable";
 import { isAdmin, requireSignin } from "../middelwares/authMiddleware.js";
@@ -8,6 +7,8 @@ import {
   getSingleProductController,
   productPhotoController,
   getAllProductController,
+  updateProductController,
+  deleteProductController,
 } from "../controller/productController.js";
 
 const router = express.Router();
@@ -31,6 +32,19 @@ router.get(
   requireSignin,
   isAdmin,
   productPhotoController
+);
+router.delete(
+  "/deleteproduct/:slug",
+  requireSignin,
+  isAdmin,
+  deleteProductController
+);
+router.put(
+  "/updateproduct/:pid",
+  requireSignin,
+  isAdmin,
+  formidable(),
+  updateProductController
 );
 
 export default router;

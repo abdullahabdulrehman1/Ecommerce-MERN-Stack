@@ -16,33 +16,6 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// const initialState = {
-//   user: [],
-//   token: "",
-//   auth: false,
-//   role: "0",
-//   // tokenexpiration: "",
-// };
-
-// const reducer = (state, { type, payload }) => {
-//   switch (type) {
-//     case "set_role":
-//       return { ...state, role: payload.role };
-//     case "login":
-//       return {
-//         ...state,
-//         user: payload.user,
-//         token: payload.token,
-//         auth: Boolean(payload.auth),
-//         role: payload.role,
-//         // tokenexpiration: payload.tokenexpiration,
-//       };
-//     case "logout":
-//       return { initialState };
-//     default:
-//       throw new Error(`Unknown action type: ${type}`);
-//   }
-// };
 
 export const AuthProvider = ({ children }) => {
   // const [state, dispatch] = useReducer(reducer, initialState);

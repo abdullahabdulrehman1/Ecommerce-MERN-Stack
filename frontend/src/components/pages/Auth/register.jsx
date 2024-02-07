@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "flowbite-react";
+import url from "../../../utils/exporturl";
 const Register = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -51,7 +52,7 @@ const Register = () => {
     };
 
     const res = axios
-      .post(`${url}/register`, data)
+      .post(`${url}/auth/register`, data)
       .then((response) => {
         // Handle success - you can redirect or show a success message
 

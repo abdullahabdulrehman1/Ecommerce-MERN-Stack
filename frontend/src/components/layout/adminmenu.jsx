@@ -5,7 +5,12 @@ const AdminMenu = () => {
     <div className="">
       <div className="text-center">
         <div className="list-group ">
-          <h1 className="font-extrabold py-5">Admin Panel</h1>
+          <NavLink
+            to={"/dashboard/admin/admin-info"}
+            className="font-extrabold py-5"
+          >
+            Admin Panel
+          </NavLink>
           <NavLink
             to="/dashboard/admin/create-category"
             className="list-group-item list-group-item-action block border"
