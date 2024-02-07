@@ -25,13 +25,13 @@ router.put(
 );
 router.get("/getcategory", requireSignin, isAdmin, getAllCategoryController);
 router.get(
-  "/getsinglecategory",
+  "/getsinglecategory/:slug",
   requireSignin,
   isAdmin,
   getSingleCategoryController
 );
 router.delete(
-  "/deletecategory",
+  "/deletecategory/:id",
   requireSignin,
   isAdmin,
   deleteCategoryController

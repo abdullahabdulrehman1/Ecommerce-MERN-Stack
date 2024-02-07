@@ -62,8 +62,8 @@ export const getAllCategoryController = async (req, res) => {
 };
 export const getSingleCategoryController = async (req, res) => {
   try {
-    const { name } = req.body;
-    const allCategory = await categorymodel.findOne({ name: name });
+    const { slug } = req.body;
+    const allCategory = await categorymodel.findOne(slug);
     res.status(200).json({ success: true, allCategory });
   } catch (err) {
     res.status(400).json({ success: false, messege: err.message });
@@ -72,16 +72,20 @@ export const getSingleCategoryController = async (req, res) => {
 
 export const deleteCategoryController = async (req, res) => {
   try {
-    const { name } = req.body;
-    const allCategory = await categorymodel.findOneAndDelete({ name: name });
+    const { id } = req.params;
+    const allCategory = await categorymodel.findByIdAndDelete(id);
+    if (!allCategory) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category not found" });
+    }
     res
       .status(200)
-      .json({ success: true, messege: "success fully deleted", allCategory });
+      .json({ success: true, message: "Successfully deleted", allCategory });
   } catch (err) {
-    res.status(400).json({ success: false, messege: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
-
 export default {
   createCategoryController,
   deleteCategoryController,

@@ -6,7 +6,6 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authroute.js";
 import router from "./routes/authroute.js";
 import { testController } from "./middelwares/authMiddleware.js";
-// import {categoryRoutes} from "./routes/categoryRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productroutes.js";
 import { getAllCategoryController, getSingleCategoryController } from "./controller/categoryController.js";
@@ -46,9 +45,3 @@ app.listen(PORT,HOST, () => {
       .white.italic.underline
   );
 });
-
-
-
-
-
-
