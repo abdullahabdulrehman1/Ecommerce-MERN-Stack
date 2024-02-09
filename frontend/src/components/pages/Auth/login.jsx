@@ -41,7 +41,10 @@ const Login = () => {
     }
 
     try {
+      // const res = await axios.post(`${url}/auth/login`, formData);
+      console.log(url)
       const res = await axios.post(`${url}/auth/login`, formData);
+      
       // <Spinners />
       if (res && res.data.success === true) {
         setError(`${res.data.message}`);

@@ -32,8 +32,6 @@ const Home = () => {
     }
   }
   }
- 
-  
   useEffect(() => {
   AuthCheck();
   }, []);

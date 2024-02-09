@@ -9,12 +9,15 @@ import {
   getAllCategoryController,
   deleteCategoryController,
 } from "../controller/categoryController.js";
+// import { alreadyExistCategory } from "../middelwares/categoryMiddleware.js";
 const router = express.Router();
 router.post(
   "/create-category",
   requireSignin,
   isAdmin,
-  createCategoryController
+
+  createCategoryController,
+  
 );
 //update category
 router.put(

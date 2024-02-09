@@ -3,6 +3,8 @@ import express from "express";
 import {
   registerController,
   loginController,
+  allUsersController,
+  deleteUserController,
   forgotPasswordController,
 } from "../controller/registerController.js";
 import { testController } from "../middelwares/authMiddleware.js";
@@ -36,4 +38,8 @@ router.get("/admin-auth", requireSignin, isAdmin, (req, res) => {
   // } else res.status(44).json({ success: false });
 });
 router.post("/forgot-password", forgotPasswordController);
+
+router.get("/all-users", requireSignin, isAdmin, allUsersController);
+router.delete("/delete-user",requireSignin,isAdmin,deleteUserController);
+
 export default router;

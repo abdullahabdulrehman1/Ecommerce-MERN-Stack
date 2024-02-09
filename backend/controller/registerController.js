@@ -155,9 +155,39 @@ export const forgotPasswordController = async (req, res) => {
 
 
 //   export default { registerController, loginController };
+
+export const allUsersController = async (req, res) => {
+  try {
+    const users = await usermodel.find({});
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error(`Error: ALLUSERSCONTROLLER ERROR ${error.message}`);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const deleteUserController = async (req, res) => {
+  try {
+    const { email,id } = req.body;
+   
+    const user = await usermodel.findOneAndDelete({ email ,id});
+    if(!user){
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully"  });
+  }
+  catch (error) {
+    console.error(`Error: DELETEUSERCONTROLLER ERROR ${error.message}`);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
 export default {
   registerController,
+  deleteUserController,
   loginController,
-  forgotPasswordController,
+  allUsersController,
+  forgotPasswordController
+  
 };
 
