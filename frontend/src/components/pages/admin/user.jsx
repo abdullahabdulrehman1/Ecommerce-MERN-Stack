@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../layout/layout.jsx";
 import AdminMenu from "../../layout/adminmenu.jsx";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
 import { copy } from "superagent";
 const User = () => {
+  const [clickedRow, setClickedRow] = React.useState();
+  const onButtonClick = (e, row) => {
+    e.stopPropagation();
+    setClickedRow(row);
+  };
+
   // displayAllUsers();
   const columns = [
     { field: "id", headerName: "ID", width: 260 },
@@ -29,6 +36,23 @@ const User = () => {
       type: "number",
       width: 120,
       editable: true,
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      description: "Actions column.",
+      sortable: false,
+      width: 160,
+      renderCell: (params) => {
+        return (
+          <Button
+            onClick={(e) => onButtonClick(e, params.row)}
+            variant="contained"
+          >
+            Delete
+          </Button>
+        );
+      },
     },
   ];
   const [rows, setRows] = useState([]);
@@ -78,10 +102,11 @@ const User = () => {
                   },
                 }}
                 pageSizeOptions={[5, 10, 20]}
-                checkboxSelection
+                // checkboxSelection
                 // disableRowSelectionOnClick
               />
             </Box>
+            clickedRow: {clickedRow ? `${clickedRow.email}` : null}
           </div>
         </div>
       </div>

@@ -4,12 +4,17 @@ import slugify from "slugify";
 export const createCategoryController = async (req, res) => {
   try {
     const { name } = req.body;
-    if (!name){ return res.status(200).json({success: false,messege:"Name is required"});}
-    const existingCategory = await categorymodel.findOne({ name });
-    if (existingCategory)
-      {return  res
+    if (!name) {
+      return res
         .status(200)
-        .json({ success: false, message: "Category already exists" });}
+        .json({ success: false, messege: "Name is required" });
+    }
+    const existingCategory = await categorymodel.findOne({ name });
+    if (existingCategory) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Category already exists" });
+    }
     const category = new categorymodel({ name, slug: slugify(name) }); // Change here
     const savedCategory = await category.save();
     // res.json(savedCategory);
@@ -27,27 +32,22 @@ export const createCategoryController = async (req, res) => {
 
 export const updateCategoryController = async (req, res) => {
   try {
-    const { name, prevname } = req.body;
-    const existingCategory = await categorymodel.findOne({ name: prevname });
+    const { name, id } = req.body;
+    const existingCategory = await categorymodel.findOne({ _id: id });
     if (!existingCategory) {
       return res
-        .status(400)
+        .status(200)
         .json({ success: false, message: "Previous category not found" });
     }
-    if (prevname !== name) {
-      const slug = slugify(name);
-      const updatedCategory = await categorymodel.findOneAndUpdate(
-        { name: prevname },
-        { name, slug },
-        { new: true }
-      );
-      console.log(updatedCategory);
-      res.status(200).json({ success: true, message: updatedCategory });
-    } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "Name is same as previous" });
-    }
+
+    const slug = slugify(name);
+
+    const updatedCategory = await categorymodel.findOneAndUpdate(
+      { _id: id },
+      { name, slug },
+      { new: true }
+    );
+    res.status(200).json({ success: true, message: updatedCategory });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
