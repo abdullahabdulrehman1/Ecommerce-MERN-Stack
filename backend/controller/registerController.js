@@ -167,9 +167,9 @@ export const allUsersController = async (req, res) => {
 };
 export const deleteUserController = async (req, res) => {
   try {
-    const { email,id } = req.body;
+    const { id } = req.params;
    
-    const user = await usermodel.findOneAndDelete({ email ,id});
+    const user = await usermodel.findByIdAndDelete({ _id:id});
     if(!user){
       return res.status(400).json({ message: "User not found" });
     }

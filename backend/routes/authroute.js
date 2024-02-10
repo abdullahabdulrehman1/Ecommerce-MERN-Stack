@@ -40,6 +40,6 @@ router.get("/admin-auth", requireSignin, isAdmin, (req, res) => {
 router.post("/forgot-password", forgotPasswordController);
 
 router.get("/all-users", requireSignin, isAdmin, allUsersController);
-router.delete("/delete-user",requireSignin,isAdmin,deleteUserController);
+router.delete("/delete-user/:id",requireSignin,isAdmin,deleteUserController);
 
 export default router;

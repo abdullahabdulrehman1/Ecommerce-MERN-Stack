@@ -7,6 +7,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
 import { copy } from "superagent";
+import toast from "toastify";
 const User = () => {
   const [clickedRow, setClickedRow] = React.useState();
   const onButtonClick = (e, row) => {
@@ -44,9 +45,14 @@ const User = () => {
       sortable: false,
       width: 160,
       renderCell: (params) => {
+        console.log(params);
         return (
           <Button
-            onClick={(e) => onButtonClick(e, params.row)}
+            onClick={(e) => {
+              onButtonClick(e, params.row);
+              deleteUser(params.row.id);
+            }}
+            disabled={params.row.role === "1"}
             variant="contained"
           >
             Delete
@@ -57,26 +63,43 @@ const User = () => {
   ];
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    const displayAllUsers = async () => {
-      try {
-        const response = await axios.get(`${url}/auth/all-users`);
-        const data = response.data;
-        return setRows(
-          data.users.map((users) => {
-            return {
-              id: users._id,
-              name: users.name,
-              email: users.email,
-              role: users.role,
-            };
-          })
-        );
-      } catch (error) {
-        console.log(error);
+  const displayAllUsers = async () => {
+    try {
+      const response = await axios.get(`${url}/auth/all-users`);
+      const data = response.data;
+      return setRows(
+        data.users.map((users) => {
+          return {
+            id: users._id,
+            name: users.name,
+            email: users.email,
+            role: users.role,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const deleteUser = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.delete(`${url}/auth/delete-user/${id}`, {});
+      if (response.data.success) {
+        displayAllUsers();
+        console.log("User deleted");
+        toast.success("User Deleted");
+      } else {
+        displayAllUsers();
+        console.log(response.data.message); // Log the error message from the server
+        toast.error(response.data.message);
       }
-    };
-
+    } catch (error) {
+      console.log("deleteCategory function error: " + error);
+    }
+  };
+  useEffect(() => {
     displayAllUsers();
   }, []);
 
