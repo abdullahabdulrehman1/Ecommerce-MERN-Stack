@@ -6,8 +6,10 @@ import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import { copy } from "superagent";
-import toast from "toastify";
+import {toast} from "react-toastify";
 const User = () => {
   const [clickedRow, setClickedRow] = React.useState();
   const onButtonClick = (e, row) => {
@@ -16,6 +18,7 @@ const User = () => {
   };
 
   // displayAllUsers();
+  const [disable, setdisable] = useState(null);
   const columns = [
     { field: "id", headerName: "ID", width: 260 },
     {
@@ -51,8 +54,9 @@ const User = () => {
             onClick={(e) => {
               onButtonClick(e, params.row);
               deleteUser(params.row.id);
+              setdisable(params.row.id);
             }}
-            disabled={params.row.role === "1"}
+            disabled={params.row.role === "1" || params.row.id === disable}
             variant="contained"
           >
             Delete
@@ -110,8 +114,11 @@ const User = () => {
           <div className="col-span-3 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="col-span-9  px-10 py-1">
-            <h1>ALL Users</h1>
+          <div className="col-span-9  px-10 pt-2">
+          <Typography variant="h5" color="initial">
+              All Users{" "}
+            </Typography>
+            <Divider sx={{marginY: "10px"}} />
             <Box sx={{ height: "full", width: "full" }}>
               <DataGrid
                 isLoaded={true}

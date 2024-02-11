@@ -51,6 +51,9 @@ const Login = () => {
         setLoading(false);
        setauthuser(res.data.user);
        setisloggedin(true);
+       
+       
+       navigate("/");
       //  console.log(res.data.user);
        console.log(authuser);
         // localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -67,7 +70,7 @@ const Login = () => {
     } catch (error) {
       setError(`${error.response.data.message}`);
     }
-    navigate("/");
+   
   };
 
   return (

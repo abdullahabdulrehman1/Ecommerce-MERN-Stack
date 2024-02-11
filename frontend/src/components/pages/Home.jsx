@@ -25,10 +25,10 @@ const Home = () => {
         setisloggedin(true);
         setsuccess(true);
     }
-    if(response.data.success === false){
-      localStorage.removeItem("token");
+    else{
       setsuccess(false);
       setisloggedin(false);
+      localStorage.removeItem("token");
     }
   }
   }

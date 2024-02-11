@@ -1,9 +1,8 @@
-// import JWT from "jsonwebtoken";
 import axios from "axios";
 import usermodel from "../models/usermodel.js";
 import JWT from "jsonwebtoken";
 import mongoose from "mongoose";
-// let decoded;
+
 export const requireSignin = async (req, res, next) => {
   try {
     const token = await req.headers.authorization;
@@ -16,15 +15,14 @@ export const requireSignin = async (req, res, next) => {
     }
     await JWT.verify(token, process.env.JSON_WEB, function (err, decoded) {
       if (err) {
-        //  localStorage.removeItem(String('token'))
-
-        //  localStorage.removeItem(String('user'))
         console.log(
           `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
         );
-        console.log(err);
 
-        // res.status(401).json({ ok: false, message: "Unauthorized: Invalid token" });
+        res
+          .status(401)
+          .json({ success: false, message: "Unauthorized: Invalid token" });
+        console.log(err);
       } else {
         console.log("Token verifified successfully");
         console.log(

@@ -86,7 +86,7 @@ export const loginController = async (req, res) => {
         name: emailcheck.name,
       },
       process.env.JSON_WEB,
-      { expiresIn: "1h" }
+      { expiresIn: "5h" }
     );
     const date = new Date();
     console.log(
@@ -112,7 +112,7 @@ export const loginController = async (req, res) => {
     // next()
   } catch (error) {
     console.log(`Error: LOGINCONTROLLER ERROR ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({success: false, message: "Internal server error" });
   }
 };
 // ... (Previous code remains unchanged)
@@ -153,7 +153,6 @@ export const forgotPasswordController = async (req, res) => {
   }
 };
 
-
 //   export default { registerController, loginController };
 
 export const allUsersController = async (req, res) => {
@@ -168,26 +167,22 @@ export const allUsersController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
   try {
     const { id } = req.params;
-   
-    const user = await usermodel.findByIdAndDelete({ _id:id});
-    if(!user){
+
+    const user = await usermodel.findByIdAndDelete({ _id: id });
+    if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    res.status(200).json({ message: "User deleted successfully"  });
-  }
-  catch (error) {
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
     console.error(`Error: DELETEUSERCONTROLLER ERROR ${error.message}`);
     res.status(500).json({ message: "Internal server error" });
   }
-}
-
+};
 
 export default {
   registerController,
   deleteUserController,
   loginController,
   allUsersController,
-  forgotPasswordController
-  
+  forgotPasswordController,
 };
-

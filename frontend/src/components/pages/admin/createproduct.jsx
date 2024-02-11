@@ -1,6 +1,8 @@
 import React from 'react'
 import Layout from '../../layout/layout.jsx'
 import AdminMenu from '../../layout/adminmenu.jsx'
+import  Typography  from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
 const CreateProduct = () => {
   return (
     <Layout title={"Ecommerce | Create-Product"}>
@@ -9,8 +11,11 @@ const CreateProduct = () => {
           <div className="col-span-3 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="col-span-9  px-10 py-1">
-           <h1>Create Product</h1>
+          <div className="col-span-9  px-10 pt-2">
+          <Typography variant="h5" color="initial">
+              Create Product{" "}
+            </Typography>
+          <Divider sx={{marginY: "10px"}}/>
           </div>
         </div>
       </div>

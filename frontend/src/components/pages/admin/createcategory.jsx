@@ -16,14 +16,9 @@ import { data } from "autoprefixer";
 
 const CreateCategory = () => {
   const [rows, setRows] = useState([]);
-  // const [editStart, setEditStart] = useState(false)
   const [category, setCategory] = useState("");
 
-  const handleCellChangeCommitted = (params) => {
-    console.log("Edited Name:", params.props.value);
-  };
   const getAllCategories = async () => {
-    // event.preventDefault();
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
@@ -46,10 +41,13 @@ const CreateCategory = () => {
   }, []);
 
   console.log(rows);
-  // console.log(getAllCategories)
 
   const handleCategory = async (event) => {
     event.preventDefault();
+    if (category === "") return toast.error("Category cannot be empty");
+    const regex = /^[a-zA-Z _-]+$/i;
+    if (!regex.test(category))
+      return toast.error("Category cannot contain special characters");
 
     try {
       const token = localStorage.getItem("token");
@@ -77,7 +75,6 @@ const CreateCategory = () => {
   const onButtonClick = (e, row) => {
     e.stopPropagation();
 
-    
     setClickedRow(row);
   };
   const deleteCategory = async (id) => {
@@ -100,14 +97,12 @@ const CreateCategory = () => {
     }
   };
   const editCategory = async (params) => {
-    // console.log(params)
-    // const { id, name } = params;
-    const updated = { ...params, isNew: false };
-    console.log(params);
+    const regex = /^[a-zA-Z _-]+$/i;
+    if (!regex.test(category))
+      return toast.error("Category cannot contain special characters");
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
-
       if (params !== undefined) {
         const response = await axios.put(`${url}/category/update-category`, {
           id: params.id,
@@ -119,11 +114,10 @@ const CreateCategory = () => {
           toast.success("Category Updated");
           getAllCategories();
         } else {
-          console.log(response.data.message); // Log the error message from the server
+          console.log(response.data.message);
           toast.error(response.data.message);
         }
       } else {
-        // console.log(response.data.   message); // Log the error message from the server
         toast.error("Same Value");
       }
     } catch (error) {
@@ -131,7 +125,7 @@ const CreateCategory = () => {
     }
   };
   const [edit, setEdit] = useState("");
-
+  const [disable, setdisable] = useState(null);
   const columns = [
     {
       field: "name",
@@ -139,7 +133,6 @@ const CreateCategory = () => {
       width: 500,
       editable: true,
     },
-
     {
       field: "delete",
       headerName: "Delete",
@@ -150,33 +143,14 @@ const CreateCategory = () => {
         return (
           <Button
             onClick={(e) => {
+              setdisable(params.row.id);
               onButtonClick(e, params.row);
               deleteCategory(params.row.id);
             }}
+            disabled={disable === params.row.id}
             variant="contained"
           >
             Delete
-          </Button>
-        );
-      },
-    },
-    {
-      field: "Edit",
-      headerName: "Edit",
-      description: "Actions column.",
-      sortable: false,
-      width: 160,
-      renderCell: (params) => {
-        return (
-          <Button
-            onClick={(e) => {
-              onButtonClick(e, params.row);
-
-              editCategory();
-            }}
-            variant="contained"
-          >
-            EDIT
           </Button>
         );
       },
@@ -185,10 +159,8 @@ const CreateCategory = () => {
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     console.log(updatedRow);
-    //handle send data to api
     return updatedRow;
   };
-  //  console.log(category)
   return (
     <Layout title={"Ecommerce | Create-Category"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -196,10 +168,11 @@ const CreateCategory = () => {
           <div className="col-span-3 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="md:col-span-9 sm:col-span-12 px-10 py-2 ">
+          <div className="md:col-span-9 sm:col-span-12 px-10 pt-2 ">
             <Typography variant="h5" color="initial">
               Create Categories{" "}
             </Typography>
+            <Divider sx={{ marginY: "10px" }} />
             <Box sx={{ height: "full", width: "full" }}>
               <Stack
                 spacing={5}
@@ -230,7 +203,7 @@ const CreateCategory = () => {
                 <DataGrid
                   rows={rows}
                   columns={columns}
-                  pageSize={5}
+                  // pageSize={5}
                   rowsPerPageOptions={[5]}
                   processRowUpdate={editCategory}
                   onProcessRowUpdateError={() => console.log("error")}
@@ -243,7 +216,6 @@ const CreateCategory = () => {
                   }}
                 />
               </Box>
-              {/* clickedRow: {clickedRow ? `${clickedRow.name} ${edit}` : null} */}
             </Box>
           </div>
         </div>
