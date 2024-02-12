@@ -179,6 +179,22 @@ export const deleteUserController = async (req, res) => {
   }
 };
 
+export const UpdateUserController = async(req,res)=>{
+  try{
+    const {id} = req.params;
+    const {name,email,password,question} = req.body;
+    const user = await usermodel.findByIdAndUpdate({_id:id},{name,email,password,question});
+    if(!user){
+      return res.status(400).json({message:"User not found"});
+    }
+    res.status(200).json({message:"User updated successfully"});
+
+  }
+  catch(error){
+    console.error(`Error: UPDATEUSERCONTROLLER ERROR ${error.message}`);
+    res.status(500).json({message:"Internal server error"});
+  }
+}
 export default {
   registerController,
   deleteUserController,

@@ -28,7 +28,9 @@ export const createProductController = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Product already exists" });
     }
-    const productmodelcategory = await categorymodel.findOne({ name: "stand" });
+    const productmodelcategory = await categorymodel.findOne({
+      name: slugify(category),
+    });
     const product = new productmodel({
       ...req.fields,
       category: productmodelcategory._id,
@@ -46,7 +48,7 @@ export const createProductController = async (req, res) => {
       product: savedProduct,
     });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(400).json({ success: false, message: "" + err.message });
   }
 };
 

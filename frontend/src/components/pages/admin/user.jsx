@@ -8,8 +8,8 @@ import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import { copy } from "superagent";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
 const User = () => {
   const [clickedRow, setClickedRow] = React.useState();
   const onButtonClick = (e, row) => {
@@ -17,7 +17,6 @@ const User = () => {
     setClickedRow(row);
   };
 
-  // displayAllUsers();
   const [disable, setdisable] = useState(null);
   const columns = [
     { field: "id", headerName: "ID", width: 260 },
@@ -66,22 +65,29 @@ const User = () => {
     },
   ];
   const [rows, setRows] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   const displayAllUsers = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${url}/auth/all-users`);
       const data = response.data;
-      return setRows(
-        data.users.map((users) => {
-          return {
-            id: users._id,
-            name: users.name,
-            email: users.email,
-            role: users.role,
-          };
-        })
+      setLoading(false);
+
+      return (
+        setLoading(false),
+        setRows(
+          data.users.map((users) => {
+            return {
+              id: users._id,
+              name: users.name,
+              email: users.email,
+              role: users.role,
+            };
+          })
+        )
       );
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -104,6 +110,7 @@ const User = () => {
     }
   };
   useEffect(() => {
+    setLoading(true);
     displayAllUsers();
   }, []);
 
@@ -115,27 +122,34 @@ const User = () => {
             <AdminMenu />
           </div>
           <div className="col-span-9  px-10 pt-2">
-          <Typography variant="h5" color="initial">
+            <Typography variant="h5" color="initial">
               All Users{" "}
             </Typography>
-            <Divider sx={{marginY: "10px"}} />
-            <Box sx={{ height: "full", width: "full" }}>
-              <DataGrid
-                isLoaded={true}
-                rows={rows}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: {
-                      pageSize: 10,
-                    },
-                  },
-                }}
-                pageSizeOptions={[5, 10, 20]}
-                // checkboxSelection
-                // disableRowSelectionOnClick
+            <Divider sx={{ marginY: "10px" }} />
+            {loading === true ? (
+              <CircularProgress
+                sx={{ position: "absolute", top: "40%", left: "60%" }}
+                color="success"
               />
-            </Box>
+            ) : (
+              <Box sx={{ height: "full", width: "full" }}>
+                <DataGrid
+                  isLoaded={true}
+                  rows={rows}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 10,
+                      },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10, 20]}
+                  // checkboxSelection
+                  // disableRowSelectionOnClick
+                />
+              </Box>
+            )}
             clickedRow: {clickedRow ? `${clickedRow.email}` : null}
           </div>
         </div>

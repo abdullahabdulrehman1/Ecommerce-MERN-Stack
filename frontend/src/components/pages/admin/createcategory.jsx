@@ -11,33 +11,41 @@ import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
 import { DataGrid } from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
-import { Delete } from "@mui/icons-material";
-import { data } from "autoprefixer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const CreateCategory = () => {
+  const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [category, setCategory] = useState("");
 
   const getAllCategories = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
       const response = await axios.get(`${url}/category/getcategory`);
+      setLoading(false);
 
-      return setRows(
-        response.data.allCategory.map((category) => {
-          return {
-            id: category._id,
-            name: category.name,
-          };
-        })
+      return (
+        setLoading(false),
+        setRows(
+          response.data.allCategory.map((category) => {
+            return {
+              id: category._id,
+              name: category.name,
+            };
+          })
+        )
       );
     } catch (error) {
+      setLoading(false);
       console.log("getAllCategories function error: " + error);
     }
   };
   useEffect(() => {
+    setLoading(true);
     getAllCategories();
+    // setLoading
   }, []);
 
   console.log(rows);
@@ -97,9 +105,10 @@ const CreateCategory = () => {
     }
   };
   const editCategory = async (params) => {
-    const regex = /^[a-zA-Z _-]+$/i;
-    if (!regex.test(category))
+    const regex = /^[a-z]+$/i;
+    if (!regex.test(params.name))
       return toast.error("Category cannot contain special characters");
+
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
@@ -173,6 +182,7 @@ const CreateCategory = () => {
               Create Categories{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
+
             <Box sx={{ height: "full", width: "full" }}>
               <Stack
                 spacing={5}
@@ -199,23 +209,30 @@ const CreateCategory = () => {
                 </Button>
               </Stack>
               <Divider />
-              <Box>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  // pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  processRowUpdate={editCategory}
-                  onProcessRowUpdateError={() => console.log("error")}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 10,
-                      },
-                    },
-                  }}
+              {loading === true ? (
+                <CircularProgress
+                  sx={{ position: "absolute", top: "40%", left: "60%" }}
+                  color="success"
                 />
-              </Box>
+              ) : (
+                <Box>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    // pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    processRowUpdate={editCategory}
+                    onProcessRowUpdateError={() => console.log("error")}
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 10,
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+              )}
             </Box>
           </div>
         </div>
