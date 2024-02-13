@@ -1,4 +1,5 @@
 import React from "react";
+import Box from "@mui/material/Box";
 import Layout from "../../layout/layout.jsx";
 import AdminMenu from "../../layout/adminmenu.jsx";
 import Typography from "@mui/material/Typography";
@@ -21,6 +22,8 @@ import { toast } from "react-toastify";
 import InputAdornment from "@mui/material/InputAdornment";
 import { CancelRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+
 const CreateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -111,8 +114,15 @@ const CreateProduct = () => {
               Create Product{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
-
-            <FormControl sx={{ width: "100%" }}>
+{loading ? (
+  <Box
+  display="flex"
+  justifyContent="center"
+  alignItems={"center"}
+  minHeight={300}
+  sx={{ marginY: 2 }}>
+                 <CircularProgress />
+               </Box>):(<FormControl sx={{ width: "100%" }}>
               <InputLabel id="demo-simple-select-label">Category</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -272,7 +282,8 @@ const CreateProduct = () => {
                   Submit
                 </Button>
               </form>
-            </FormControl>
+            </FormControl>)}
+            
           </div>
         </div>
       </div>

@@ -2,10 +2,7 @@ import Layout from "../../layout/layout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-// import {
-//   useDispatchContext,
-//   useStateContext,
-// } from "../../../context/authRoute";
+
 import { Toast } from "flowbite-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../context/authRoute";

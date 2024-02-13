@@ -24,6 +24,7 @@ import CreateProduct from "./components/pages/admin/createproduct";
 import User from "./components/pages/admin/user";
 import Order from "./components/pages/user/order";
 import UserProfile from "./components/pages/user/profile";
+import AllProducts from "./components/pages/admin/allproducts";
 // import { useAuth } from "./context/authRoute.jsx";
 // import Admin from "./components/routes/adminroute";
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="admin/create-category" element={<CreateCategory />} />
           <Route path="admin/create-product" element={<CreateProduct />} />
           <Route path="admin/allusers" element={<User />} />
+          <Route path="admin/all-products" element={<AllProducts />} />
         </Route>
 
         <Route path="/about" element={<About />} />

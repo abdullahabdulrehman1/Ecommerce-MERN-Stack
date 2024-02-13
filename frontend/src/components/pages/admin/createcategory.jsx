@@ -211,10 +211,14 @@ const CreateCategory = () => {
               </Stack>
               <Divider />
               {loading === true ? (
-                <CircularProgress
-                  sx={{ position: "absolute", top: "40%", left: "60%" }}
-                  color="success"
-                />
+                <Box
+                display="flex"
+                justifyContent="center"
+                alignItems={"center"}
+                minHeight={300}
+                sx={{ marginY: 2 }}>
+                               <CircularProgress />
+                             </Box>
               ) : (
                 <Box>
                   <DataGrid
@@ -230,7 +234,9 @@ const CreateCategory = () => {
                           pageSize: 10,
                         },
                       },
+
                     }}
+                    pageSizeOptions={[5, 10, 20]}
                   />
                 </Box>
               )}

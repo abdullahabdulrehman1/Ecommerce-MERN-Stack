@@ -6,10 +6,12 @@ import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import Container from "@mui/material/Container";
 const User = () => {
   const [clickedRow, setClickedRow] = React.useState();
   const onButtonClick = (e, row) => {
@@ -116,13 +118,13 @@ const User = () => {
 
   return (
     <Layout title={"Dashboard | All Users"}>
-      <div className="container border border-black mx-auto rounded-lg">
-        <div className="row grid grid-cols-12 row-span-2 justify-between">
-          <div className="col-span-3 row-span-1 border ">
-            <AdminMenu />
-          </div>
-          <div className="col-span-9  px-10 pt-2">
-            <Typography variant="h5" color="initial">
+      <Container fixed maxWidth="false" sx={{ border: "3px solid black" }}>
+      <Stack direction="row" spacing={2}>
+        <Box sx={{ flexGrow: 1, flexBasis: '25%' }}>
+          <AdminMenu />
+        </Box>
+        <Box sx={{ flexGrow: 3, flexBasis: '75%', p: 2 }}>
+       <Typography variant="h5" color="initial">
               All Users{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
@@ -151,9 +153,9 @@ const User = () => {
               </Box>
             )}
             clickedRow: {clickedRow ? `${clickedRow.email}` : null}
-          </div>
-        </div>
-      </div>
+            </Box>
+      </Stack>
+    </Container>
     </Layout>
   );
 };

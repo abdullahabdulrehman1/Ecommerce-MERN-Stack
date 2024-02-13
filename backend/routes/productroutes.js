@@ -29,8 +29,8 @@ router.get(
 );
 router.get(
   "/getphotoproduct/:pid",
-  requireSignin,
-  isAdmin,
+  // requireSignin,
+  // isAdmin,
   productPhotoController
 );
 router.delete(
