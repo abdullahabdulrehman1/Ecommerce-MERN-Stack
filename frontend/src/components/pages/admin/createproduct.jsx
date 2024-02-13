@@ -3,7 +3,6 @@ import Layout from "../../layout/layout.jsx";
 import AdminMenu from "../../layout/adminmenu.jsx";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useState, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
@@ -19,9 +18,9 @@ import url from "../../../utils/exporturl.jsx";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { toast } from "react-toastify";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { CancelOutlined, UploadFileOutlined } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
+import { CancelRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 const CreateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -32,6 +31,8 @@ const CreateProduct = () => {
   const [shipping, setShipping] = useState("");
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
+  const navigate = useNavigate();
+  const handleChange = (event) => {};
   const getAllCategories = async () => {
     setLoading(true);
     try {
@@ -61,7 +62,43 @@ const CreateProduct = () => {
     getAllCategories();
     // setLoading
   }, []);
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("category", category);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("quantity", quantity);
+      formData.append("shipping", shipping);
+      formData.append("photo", photo);
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.post(
+        `${url}/product/create-product`,
+        formData
+      );
+      setLoading(false);
+      toast.success(response.data.message);
+      // navigate('/dashboard')
+      if (response.status === 201) {
+        setName("");
+        setDescription("");
+        setPrice("");
+        setCategory("");
+        setQuantity("");
+        setShipping("");
+        setPhoto("");
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("product:" + error.response.data.message);
+      console.log("handleSubmit function error: " + error);
+    }
+  };
+  // console.log(shipping)
   return (
     <Layout title={"Ecommerce | Create-Product"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -74,107 +111,168 @@ const CreateProduct = () => {
               Create Product{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
-            <Box className="mx-10 my-5 ">
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={category}
-                  label="Category"
-                  onChange={(e) => setCategory(e.target.value)}
+
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel id="demo-simple-select-label">Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={category}
+                label="Category"
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {rows.map((category) => {
+                  return (
+                    <MenuItem value={category.name} key={category.name}>
+                      {category.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <form>
+                <Stack
+                  direction={{ lg: "row", md: "column", sm: "column" }}
+                  alignItems={{ lg: "center", md: "start", sm: "start" }}
+                  justifyContent={{ md: "start", sm: "center" }}
+                  sx={{ my: 4 }}
+                  gap={4}
                 >
-                  {rows.map((category) => {
-                    return (
-                      <MenuItem value={category.id} key={category.id}>
-                        {category.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-                <form action={<Link to="/login" />}>
+                  <TextField
+                    type="text"
+                    variant="outlined"
+                    color="secondary"
+                    label="Product Name"
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    // sx={{ my: 0 }}
+                    fullWidth
+                    required
+                  />
                   <Stack
-                    spacing={6}
                     direction="row"
-                    sx={{ marginY: 4 }}
-                    alignItems={"center"}
+                    alignItems={{ lg: "center", md: "center", sm: "center" }}
+                    justifyContent={{ md: "start", sm: "start" }}
+                    gap={1}
                   >
-                    <TextField
-                      type="text"
-                      variant="outlined"
-                      color="secondary"
-                      label="Product Name"
-                      onChange={(e) => setName(e.target.value)}
-                      // value={name}
-                      fullWidth
-                      required
-                    />
                     <FormLabel>Shipping</FormLabel>
                     <RadioGroup
                       aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="female"
+                      // defaultValue="true"
                       name="radio-buttons-group"
-                      sx={{ my: 2 }}
+                      value={shipping}
+                      sx={{ my: 0 }}
+                      onChange={(e) => setShipping(e.target.value)}
+                      // onClick={}
                     >
-                      <Stack direction="horizontal" gap={1}>
+                      <Stack
+                        direction="row"
+                        alignItems={{ lg: "center", md: "start", sm: "start" }}
+                        justifyContent={{ md: "start", sm: "center" }}
+                        gap={1}
+                      >
                         <FormControlLabel
-                          value="female"
+                          value="true"
                           control={<Radio />}
                           label="Yes"
                         />
                         <FormControlLabel
-                          value="male"
+                          value="false"
                           control={<Radio />}
                           label="No"
                         />
                       </Stack>
                     </RadioGroup>
                   </Stack>
+                </Stack>
+                <TextField
+                  type="text"
+                  variant="outlined"
+                  color="secondary"
+                  label="Product Description"
+                  multiline
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={2}
+                  value={description}
+                  fullWidth
+                  required
+                  sx={{ mb: 4 }}
+                />
+                <div className="mb-8">
+                  {" "}
+                  <label className="border border-gray-500  p-2 rounded-lg">
+                    {photo ? (
+                      <>
+                        {photo.name}{" "}
+                        <CancelRounded
+                          sx={{ boxShadow: {} }}
+                          onClick={() => setPhoto("")}
+                        />
+                      </>
+                    ) : (
+                      "Upload Photo"
+                    )}
+                    <input
+                      type="file"
+                      onChange={(e) => setPhoto(e.target.files[0])}
+                      hidden
+                      accept="image/*"
+                      name="photo"
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                  {photo ? (
+                    <img
+                      src={URL.createObjectURL(photo)}
+                      style={{ marginTop: "20px", width: 450, height: 300 }}
+                      alt="product"
+                    />
+                  ) : null}
+                </div>
+                <Stack
+                  direction={{ md: "row", sm: "column" }}
+                  alignItems={{ md: "center", sm: "start" }}
+                  gap={4}
+                >
                   <TextField
-                    type="text"
+                    label="Product Price"
+                    sx={{ mb: 4, md: { width: "50%" }, sm: { width: "100%" } }}
+                    onChange={(e) => setPrice(e.target.value)}
+                    value={price}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    }}
                     variant="outlined"
-                    color="secondary"
-                    label="Product Description"
-                    multiline
-                    rows={2}
-                    // marginY={'20px'}
-                    // onChange={e => setLastName(e.target.value)}
-                    // value={lastName}
-                    fullWidth
-                    required
-                    sx={{ mb: 4 }}
+                    type="number"
                   />
 
                   <TextField
-                    type="email"
+                    label="Quantity"
+                    sx={{ mb: 4, md: { width: "50%" }, sm: { width: "100%" } }}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="start">kg</InputAdornment>
+                      ),
+                    }}
+                    value={quantity}
                     variant="outlined"
-                    color="secondary"
-                    label="Email"
-                    // onChange={e => setEmail(e.target.value)}
-                    // value={email}
-
-                    fullWidth
-                    required
-                    sx={{ mb: 4 }}
+                    type="number"
                   />
-                  <TextField
-                    type="password"
-                    variant="outlined"
-                    color="secondary"
-                    label="Password"
-                    // onChange={e => setPassword(e.target.value)}
-                    // value={password}
-                    required
-                    fullWidth
-                    sx={{ mb: 4 }}
-                  />
+                </Stack>
 
-                  <Button variant="outlined" color="secondary" type="submit">
-                    Register
-                  </Button>
-                </form>
-              </FormControl>
-            </Box>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  type="submit"
+                  onClick={handleSubmit}
+                  sx={{ mb: 2 }}
+                >
+                  Submit
+                </Button>
+              </form>
+            </FormControl>
           </div>
         </div>
       </div>

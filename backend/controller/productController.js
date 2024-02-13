@@ -7,19 +7,34 @@ export const createProductController = async (req, res) => {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !category ||
-      !quantity ||
-      !shipping ||
-      !photo
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+    if (!name) {
+      return res.status(400).json({ success: false, message: "Name is required" });
     }
+
+    if (!description) {
+      return res.status(400).json({ success: false, message: "Description is required" });
+    }
+
+    if (!price) {
+      return res.status(400).json({ success: false, message: "Price is required" });
+    }
+
+    if (!category) {
+      return res.status(400).json({ success: false, message: "Category is required" });
+    }
+
+    if (!quantity) {
+      return res.status(400).json({ success: false, message: "Quantity is required" });
+    }
+
+    if (!shipping) {
+      return res.status(400).json({ success: false, message: "Shipping is required" });
+    }
+
+    if (!photo) {
+      return res.status(400).json({ success: false, message: "Photo is required" });
+    }
+
     const existingProduct = await productmodel.findOne({
       name,
     });
@@ -136,19 +151,36 @@ export const updateProductController = async (req, res) => {
       req.fields;
     const { photo } = req.files;
 
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !category ||
-      !quantity ||
-      !shipping ||
-      !photo
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+
+    // Check if all required fields are present
+    if (!name) {
+      return res.status(400).json({ success: false, message: "Name is required" });
     }
+
+    if (!description) {
+      return res.status(400).json({ success: false, message: "Description is required" });
+    }
+
+    if (!price) {
+      return res.status(400).json({ success: false, message: "Price is required" });
+    }
+
+    if (!category) {
+      return res.status(400).json({ success: false, message: "Category is required" });
+    }
+
+    if (!quantity) {
+      return res.status(400).json({ success: false, message: "Quantity is required" });
+    }
+
+    if (!shipping) {
+      return res.status(400).json({ success: false, message: "Shipping is required" });
+    }
+
+    if (!photo) {
+      return res.status(400).json({ success: false, message: "Photo is required" });
+    }
+
 
     // const  product = await productmodel.findById(req.params.pid);
     const productmodelcategory = await categorymodel.findOne({ name: "stand" });

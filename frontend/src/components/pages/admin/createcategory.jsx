@@ -13,6 +13,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
+
 const CreateCategory = () => {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
