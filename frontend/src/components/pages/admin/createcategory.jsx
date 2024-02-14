@@ -13,7 +13,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
-
 const CreateCategory = () => {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
@@ -175,15 +174,15 @@ const CreateCategory = () => {
     <Layout title={"Ecommerce | Create-Category"}>
       <div className="container border border-black mx-auto rounded-lg">
         <div className="row grid grid-cols-12 row-span-2 justify-between">
-          <div className="col-span-3 row-span-1 border ">
+          <div className="lg:col-span-3 md:col-span-12 sm:col-span-12 xs:col-span-12 col-span-12 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="md:col-span-9 sm:col-span-12 px-10 pt-2 ">
+          <div className="lg:col-span-9 md:col-span-9 flex-col ml-10 flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
+            {" "}
             <Typography variant="h5" color="initial">
               Create Categories{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
-
             <Box sx={{ height: "full", width: "full" }}>
               <Stack
                 spacing={5}
@@ -212,19 +211,19 @@ const CreateCategory = () => {
               <Divider />
               {loading === true ? (
                 <Box
-                display="flex"
-                justifyContent="center"
-                alignItems={"center"}
-                minHeight={300}
-                sx={{ marginY: 2 }}>
-                               <CircularProgress />
-                             </Box>
+                  display="flex"
+                  justifyContent="center"
+                  alignItems={"center"}
+                  minHeight={300}
+                  sx={{ marginY: 2 }}
+                >
+                  <CircularProgress />
+                </Box>
               ) : (
                 <Box>
                   <DataGrid
                     rows={rows}
                     columns={columns}
-                    // pageSize={5}
                     rowsPerPageOptions={[5]}
                     processRowUpdate={editCategory}
                     onProcessRowUpdateError={() => console.log("error")}
@@ -234,7 +233,6 @@ const CreateCategory = () => {
                           pageSize: 10,
                         },
                       },
-
                     }}
                     pageSizeOptions={[5, 10, 20]}
                   />

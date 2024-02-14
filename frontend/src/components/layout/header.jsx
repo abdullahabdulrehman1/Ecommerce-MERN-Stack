@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
 // import {AiOutlineLogin} from 'react-icons/md'
 import { AiOutlineLogin } from "react-icons/ai";
 // import { useAuth } from "../../context/authRoute";
 import { toast } from "react-toastify";
-import useState from "react";
+// import useState from "react";
 // import { useDispatchContext, useStateContext } from "../../context/authRoute";
 import AdminRoute from "../routes/adminroute";
 import UserRoute from "../routes/userroute";
@@ -12,7 +12,10 @@ import { useAuth } from "../../context/authRoute";
 
 const Header = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
-
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
+  };
   useEffect(() => {
     try {
       const token = localStorage.getItem("token");
@@ -33,7 +36,7 @@ const Header = () => {
     <div>
       <nav className="container mx-auto rounded-lg my-5 bg-white border border-gray-600 ">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <a href="" className="flex items-center">
+          <a href="#" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap">
               Ecommerce Store
             </span>
@@ -44,6 +47,7 @@ const Header = () => {
             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400"
             aria-controls="navbar-default"
             aria-expanded="false"
+            onClick={toggleNavbar}
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -62,7 +66,12 @@ const Header = () => {
               />
             </svg>
           </button>
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
+          <div
+            className={`${
+              isOpen ? "flex" : "hidden"
+            } w-full md:block md:w-auto`}
+            id="navbar-default"
+          >
             <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white ">
               <li>
                 <a

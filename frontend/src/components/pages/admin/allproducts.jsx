@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../layout/layout.jsx";
 import AdminMenu from "../../layout/adminmenu.jsx";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import { toast } from "react-toastify";
 import axios from "axios";
 import url from "../../../utils/exporturl.jsx";
-import { DataGrid } from "@mui/x-data-grid";
-import CircularProgress from "@mui/material/CircularProgress";
-import Stack from "@mui/material/Stack";
-import Card from "@mui/material/Card";
-import Pagination from "@mui/material/Pagination";
-import CardContent from "@mui/material/CardContent";
-// import CircularProgress from "@mui/material/CircularProgress";
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
 
-import CardMedia from "@mui/material/CardMedia";
-// import Typography from '@mui/material/Typography';
-import { Button, CardActionArea, CardActions } from "@mui/material";
+import {
+  Stack,
+  CircularProgress,
+  Typography,
+  Divider,
+  Box,
+  Button,
+  Card,
+  Modal,
+  Pagination,
+  CardContent,
+  Container,
+  CardMedia,
+  CardActionArea,
+  CardActions,
+} from "@mui/material";
 const AllProducts = () => {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -67,34 +67,35 @@ const AllProducts = () => {
   }, []);
   console.log(product);
   return (
-    <Layout title={"Ecommerce | All-Products"}>
-      <Container fixed maxWidth="false" sx={{ border: "3px solid black" }}>
-        <Stack
-          direction={{ md: "row", sm: "column", xs: "column" }}
-          justifyContent={{ md: "start", sm: "center", xs: "center" }}
-          alignItems={{ md: "flex-start", sm: "center", xs: "center" }}
-          spacing={2}
-        >
-          <Box sx={{ width: { xs: "100%", sm: "50%", md: "25%" } }}>
+    <Layout title={"Ecommerce | Create-Category"}>
+      <div className="container border border-black mx-auto rounded-lg">
+        <div className="row grid grid-cols-12 row-span-auto justify-between">
+          <div className="lg:col-span-3 md:col-span-3 col-span-12 row-span-1 border ">
             <AdminMenu />
-          </Box>
-          <Box sx={{ width: { xs: "100%", sm: "50%", md: "75%" } }}>
+          </div>
+          <div className="lg:col-span-9 md:col-span-9 flex-col ml-10 flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
             <Typography variant="h5" sx={{ mt: 2 }}>
               All Products
             </Typography>
             <Divider sx={{ my: 2 }} />
-            {loading ? (<Box
- display="flex"
- justifyContent="center"
- alignItems={"center"}
- minHeight={300}
- sx={{ marginY: 2 }}>
+            {loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems={"center"}
+                minHeight={300}
+                sx={{ marginY: 2 }}
+              >
                 <CircularProgress />
               </Box>
             ) : (
               <Box
                 p={2}
-                sx={{ display: "inline-list-item" }}
+                sx={{
+                  display: "inline-list-item",
+                  flexWrap: "wrap",
+                  justifyContent: "start",
+                }}
                 gap={4}
                 // alignItems={"stretch"}
                 // justifyContent={"space-evenly"}
@@ -106,14 +107,14 @@ const AllProducts = () => {
                     <Stack
                       direction="row"
                       justifyContent={"start"}
-                      alignItems={"stretch"}
+                      alignItems={"center"}
                       flexWrap="wrap"
                       key={product.id}
                     >
                       <Card
                         sx={{
-                          minWidth: 240,
-                          maxWidth: 240,
+                          minWidth: 210,
+                          maxWidth: 210,
                           maxHeight: 350,
                           minHeight: 350,
                           backgroundColor: "#f7f7f7",
@@ -135,7 +136,6 @@ const AllProducts = () => {
                               boxShadow: "2px 0.5px 5px ",
                               borderRadius: "20px",
                             }}
-                            // width="100"/
                             image={`${url}/product/getphotoproduct/${product.id}`}
                             alt="green iguana"
                           />
@@ -154,7 +154,6 @@ const AllProducts = () => {
                               align="justify"
                               color="text.secondary"
                               sx={{ maxLines: 3, textOverflow: "ellipsis" }}
-                              // overflow={"scrollable"}
                             >
                               {product.description}
                             </Typography>
@@ -183,16 +182,20 @@ const AllProducts = () => {
               alignItems={"center"}
               sx={{ marginY: 2 }}
             >
-             {loading? (<></>):( <Pagination
-                count={Math.ceil(product.length / itemperpage)}
-                page={page}
-                onChange={handleChange}
-                color="primary"
-              />)}
+              {loading ? (
+                <></>
+              ) : (
+                <Pagination
+                  count={Math.ceil(product.length / itemperpage)}
+                  page={page}
+                  onChange={handleChange}
+                  color="primary"
+                />
+              )}
             </Box>
-          </Box>
-        </Stack>
-      </Container>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };

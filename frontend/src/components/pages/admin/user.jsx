@@ -117,14 +117,14 @@ const User = () => {
   }, []);
 
   return (
-    <Layout title={"Dashboard | All Users"}>
-      <Container fixed maxWidth="false" sx={{ border: "3px solid black" }}>
-      <Stack direction="row" spacing={2}>
-        <Box sx={{ flexGrow: 1, flexBasis: '25%' }}>
-          <AdminMenu />
-        </Box>
-        <Box sx={{ flexGrow: 3, flexBasis: '75%', p: 2 }}>
-       <Typography variant="h5" color="initial">
+    <Layout title={"Ecommerce | Create-Category"}>
+      <div className="container border border-black mx-auto rounded-lg">
+        <div className="row grid grid-cols-12 row-span-auto justify-between">
+          <div className="lg:col-span-3 md:col-span-3 col-span-12 row-span-1 border ">
+            <AdminMenu />
+          </div>
+          <div className="lg:col-span-9 md:col-span-9 flex-col  ml-10  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
+            <Typography variant="h5" color="initial">
               All Users{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
@@ -134,8 +134,10 @@ const User = () => {
                 color="success"
               />
             ) : (
-              <Box sx={{ height: "full", width: "full" }}>
+              <Box sx={{ m: 2 }}>
                 <DataGrid
+                  // sx={{  }}
+
                   isLoaded={true}
                   rows={rows}
                   columns={columns}
@@ -149,13 +151,14 @@ const User = () => {
                   pageSizeOptions={[5, 10, 20]}
                   // checkboxSelection
                   // disableRowSelectionOnClick
+                  // width="25%"
                 />
               </Box>
             )}
-            clickedRow: {clickedRow ? `${clickedRow.email}` : null}
-            </Box>
-      </Stack>
-    </Container>
+            {/* clickedRow: {clickedRow ? `${clickedRow.email}` : null} */}
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };

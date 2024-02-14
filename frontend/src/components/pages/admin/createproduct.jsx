@@ -103,187 +103,233 @@ const CreateProduct = () => {
   };
   // console.log(shipping)
   return (
-    <Layout title={"Ecommerce | Create-Product"}>
+    <Layout title={"Ecommerce | Create-Category"}>
       <div className="container border border-black mx-auto rounded-lg">
-        <div className="row grid grid-cols-12 row-span-2 justify-between">
-          <div className="col-span-3 row-span-1 border ">
+        <div className="row grid grid-cols-12 row-span-auto justify-between">
+          <div className="lg:col-span-3 md:col-span-3 col-span-12 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="md:col-span-9 sm:col-span-12  px-10 pt-2 ">
+          <div className="lg:col-span-9 md:col-span-9 flex-col  ml-10  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
             <Typography variant="h5" color="initial">
               Create Product{" "}
             </Typography>
             <Divider sx={{ marginY: "10px" }} />
-{loading ? (
-  <Box
-  display="flex"
-  justifyContent="center"
-  alignItems={"center"}
-  minHeight={300}
-  sx={{ marginY: 2 }}>
-                 <CircularProgress />
-               </Box>):(<FormControl sx={{ width: "100%" }}>
-              <InputLabel id="demo-simple-select-label">Category</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={category}
-                label="Category"
-                onChange={(e) => setCategory(e.target.value)}
+            {loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems={"center"}
+                minHeight={300}
+                sx={{ marginY: 2 }}
               >
-                {rows.map((category) => {
-                  return (
-                    <MenuItem value={category.name} key={category.name}>
-                      {category.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-              <form>
-                <Stack
-                  direction={{ lg: "row", md: "column", sm: "column" }}
-                  alignItems={{ lg: "center", md: "start", sm: "start" }}
-                  justifyContent={{ md: "start", sm: "center" }}
-                  sx={{ my: 4 }}
-                  gap={4}
+                <CircularProgress />
+              </Box>
+            ) : (
+              <FormControl
+                sx={{
+                  width: "full",
+                  display: "flex",
+                  m: 4,
+                  justifyContent: "center",
+                }}
+              >
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={category}
+                  label="Category"
+                  onChange={(e) => setCategory(e.target.value)}
                 >
+                  {rows.map((category) => {
+                    return (
+                      <MenuItem value={category.name} key={category.name}>
+                        {category.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                <form>
+                  <Stack
+                    direction={{ lg: "row", md: "column", sm: "column" }}
+                    alignItems={{ lg: "center", md: "start", sm: "start" }}
+                    justifyContent={{ md: "start", sm: "center" }}
+                    sx={{ my: 4 }}
+                    gap={4}
+                  >
+                    <TextField
+                      type="text"
+                      variant="outlined"
+                      color="secondary"
+                      label="Product Name"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      // sx={{ my: 0 }}
+                      fullWidth
+                      required
+                    />
+                    <Stack
+                      direction="row"
+                      alignItems={{ lg: "center", md: "center", sm: "center" }}
+                      justifyContent={{ md: "start", sm: "start" }}
+                      gap={1}
+                    >
+                      <FormLabel>Shipping</FormLabel>
+                      <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        // defaultValue="true"
+                        name="radio-buttons-group"
+                        value={shipping}
+                        sx={{ my: 0 }}
+                        onChange={(e) => setShipping(e.target.value)}
+                        // onClick={}
+                      >
+                        <Stack
+                          direction="row"
+                          alignItems={{
+                            lg: "center",
+                            md: "start",
+                            sm: "start",
+                          }}
+                          justifyContent={{ md: "start", sm: "center" }}
+                          gap={1}
+                        >
+                          <FormControlLabel
+                            value="true"
+                            control={<Radio />}
+                            label="Yes"
+                          />
+                          <FormControlLabel
+                            value="false"
+                            control={<Radio />}
+                            label="No"
+                          />
+                        </Stack>
+                      </RadioGroup>
+                    </Stack>
+                  </Stack>
                   <TextField
                     type="text"
                     variant="outlined"
                     color="secondary"
-                    label="Product Name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    // sx={{ my: 0 }}
+                    label="Product Description"
+                    multiline
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={2}
+                    value={description}
                     fullWidth
                     required
+                    sx={{ mb: 4 }}
                   />
-                  <Stack
-                    direction="row"
-                    alignItems={{ lg: "center", md: "center", sm: "center" }}
-                    justifyContent={{ md: "start", sm: "start" }}
-                    gap={1}
-                  >
-                    <FormLabel>Shipping</FormLabel>
-                    <RadioGroup
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      // defaultValue="true"
-                      name="radio-buttons-group"
-                      value={shipping}
-                      sx={{ my: 0 }}
-                      onChange={(e) => setShipping(e.target.value)}
-                      // onClick={}
-                    >
-                      <Stack
-                        direction="row"
-                        alignItems={{ lg: "center", md: "start", sm: "start" }}
-                        justifyContent={{ md: "start", sm: "center" }}
-                        gap={1}
-                      >
-                        <FormControlLabel
-                          value="true"
-                          control={<Radio />}
-                          label="Yes"
-                        />
-                        <FormControlLabel
-                          value="false"
-                          control={<Radio />}
-                          label="No"
-                        />
-                      </Stack>
-                    </RadioGroup>
-                  </Stack>
-                </Stack>
-                <TextField
-                  type="text"
-                  variant="outlined"
-                  color="secondary"
-                  label="Product Description"
-                  multiline
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={2}
-                  value={description}
-                  fullWidth
-                  required
-                  sx={{ mb: 4 }}
-                />
-                <div className="mb-8">
-                  {" "}
-                  <label className="border border-gray-500  p-2 rounded-lg">
+                  <div className="mb-8">
+                    <label className=" p-2 rounded-lg ">
+                      {photo ? (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            p: { sm: 2, xs: 0 },
+                            border: { sm: "1px solid black ", xs: "none" },
+                            borderRadius: { sm: "20px", xs: "none" },
+                          }}
+                          textOverflow={"clip"}
+                          display={"inline"}
+                        >
+                          {photo.name}{" "}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            p: { sm: 2, xs: 0 },
+                            border: { sm: "1px solid black ", xs: "none" },
+                            borderRadius: { sm: "20px", xs: "none" },
+                          }}
+                          textOverflow={"clip"}
+                          display={"inline"}
+                        >
+                          Upload Photo
+                        </Typography>
+                      )}
+                      <input
+                        type="file"
+                        onChange={(e) => setPhoto(e.target.files[0])}
+                        hidden
+                        accept="image/*"
+                        name="photo"
+                        style={{ display: "none" }}
+                      />
+                    </label>
+
                     {photo ? (
-                      <>
-                        {photo.name}{" "}
+                      <div className="inline">
+                        {" "}
                         <CancelRounded
                           sx={{ boxShadow: {} }}
                           onClick={() => setPhoto("")}
                         />
-                      </>
-                    ) : (
-                      "Upload Photo"
-                    )}
-                    <input
-                      type="file"
-                      onChange={(e) => setPhoto(e.target.files[0])}
-                      hidden
-                      accept="image/*"
-                      name="photo"
-                      style={{ display: "none" }}
+                        <img
+                          src={URL.createObjectURL(photo)}
+                          // className="margin-top-4 first-letter:"
+                          className="mt-5 hidden md:block max-w-[450px] max-h-[300px]"
+                          alt="product"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                  <Stack
+                    direction={{ md: "row", sm: "column" }}
+                    alignItems={{ md: "center", sm: "start" }}
+                    gap={4}
+                  >
+                    <TextField
+                      label="Product Price"
+                      sx={{
+                        mb: 4,
+                        md: { width: "50%" },
+                        sm: { width: "100%" },
+                      }}
+                      onChange={(e) => setPrice(e.target.value)}
+                      value={price}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      }}
+                      variant="outlined"
+                      type="number"
                     />
-                  </label>
-                  {photo ? (
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      style={{ marginTop: "20px", width: 450, height: 300 }}
-                      alt="product"
+
+                    <TextField
+                      label="Quantity"
+                      sx={{
+                        mb: 4,
+                        md: { width: "50%" },
+                        sm: { width: "100%" },
+                      }}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="start">kg</InputAdornment>
+                        ),
+                      }}
+                      value={quantity}
+                      variant="outlined"
+                      type="number"
                     />
-                  ) : null}
-                </div>
-                <Stack
-                  direction={{ md: "row", sm: "column" }}
-                  alignItems={{ md: "center", sm: "start" }}
-                  gap={4}
-                >
-                  <TextField
-                    label="Product Price"
-                    sx={{ mb: 4, md: { width: "50%" }, sm: { width: "100%" } }}
-                    onChange={(e) => setPrice(e.target.value)}
-                    value={price}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">$</InputAdornment>
-                      ),
-                    }}
-                    variant="outlined"
-                    type="number"
-                  />
+                  </Stack>
 
-                  <TextField
-                    label="Quantity"
-                    sx={{ mb: 4, md: { width: "50%" }, sm: { width: "100%" } }}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="start">kg</InputAdornment>
-                      ),
-                    }}
-                    value={quantity}
+                  <Button
                     variant="outlined"
-                    type="number"
-                  />
-                </Stack>
-
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  type="submit"
-                  onClick={handleSubmit}
-                  sx={{ mb: 2 }}
-                >
-                  Submit
-                </Button>
-              </form>
-            </FormControl>)}
-            
+                    color="secondary"
+                    type="submit"
+                    onClick={handleSubmit}
+                    sx={{ mb: 2 }}
+                  >
+                    Submit
+                  </Button>
+                </form>
+              </FormControl>
+            )}
           </div>
         </div>
       </div>
