@@ -6,7 +6,6 @@ import url from "../../../utils/exporturl.jsx";
 import { styled, css } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import {
   Stack,
   FormControl,
@@ -212,17 +211,13 @@ const AllProducts = () => {
   const handleOpen = (slug) => {
     setOpen(true);
     getSingleProduct(slug);
-    // Use the productId as needed
     console.log("Clicked product ID:", slug);
   };
   const handleClose = () => setOpen(false);
-
-  // const [count, setCount] = useState([]);
   const [page, setPage] = useState(1);
   const itemperpage = 10;
   const start = (page - 1) * itemperpage;
   const end = start + itemperpage;
-  // const categoryName = singleProduct.category.name;
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -255,11 +250,6 @@ const AllProducts = () => {
       console.log("getSingleProduct function error: " + error);
     }
   };
-  // useEffect(() => {
-  //   if (singleProduct.id) {
-  //     setPhoto(`${url}/product/getphotoproduct/${singleProduct.id}`);
-  //   }
-  // }, [singleProduct]);
   useEffect(() => {
     setLoading(true);
     getSingleProduct();
@@ -296,7 +286,6 @@ const AllProducts = () => {
               quantity: product.quantity,
               price: product.price,
               slug: product.slug,
-              // categoryName: product.category?.name,
             };
           })
         )
@@ -312,13 +301,36 @@ const AllProducts = () => {
     getAllProducts();
   }, []);
   console.log(product);
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.delete(
+        `${url}/product/deleteproduct/${singleProduct.slug}`
+      );
+      setLoading(false);
+      toast.success(response.data.message);
+      if (response.status === 201) {
+        setName();
+        setDescription("");
+        setPrice("");
+        setCategory("");
+        setQuantity("");
+        setShipping("");
+        setPhoto("");
+        setOpen(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("product:" + error.response.data.message);
+      console.log("handleDelete function error: " + error);
+    }
+  };
   return (
     <Layout title={"Ecommerce | Create-Category"}>
       <div className="container border border-black mx-auto rounded-lg">
         <div>
-          {/* <TriggerButton type="button" onClick={handleOpen}>
-        Open modal
-      </TriggerButton> */}
           <Modal
             aria-labelledby="unstyled-modal-title"
             aria-describedby="unstyled-modal-description"
@@ -332,11 +344,11 @@ const AllProducts = () => {
               sx={{ width: "80%", height: "80%", overflow: "scroll" }}
             >
               <div className="container border border-black mx-auto rounded-lg">
-                <div className="row grid grid-cols-12 row-span-auto justify-between">
+                <div className="row  mx-2">
                   {/* <div className="lg:col-span-0 md:col-span-3 col-span-12 row-span-1 border "> */}
                   {/* <AdminMenu /> */}
                   {/* </div> */}
-                  <div className="lg:col-span-12 md:col-span-12 flex-col  ml-10  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
+                  <div className=" flex-col  md:mx-2  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10  pt-2 ">
                     <Typography variant="h5" color="initial">
                       Update Product{" "}
                     </Typography>
@@ -356,7 +368,7 @@ const AllProducts = () => {
                         sx={{
                           width: "full",
                           display: "flex",
-                          m: 4,
+                          m: { md: 4, sm: 0, xs: 0 },
                           justifyContent: "center",
                         }}
                       >
@@ -396,6 +408,7 @@ const AllProducts = () => {
                             justifyContent={{ md: "start", sm: "center" }}
                             sx={{ my: 4 }}
                             gap={4}
+                            paddingX={0}
                           >
                             <TextField
                               type="text"
@@ -404,19 +417,26 @@ const AllProducts = () => {
                               label="Product Name"
                               onChange={(e) => setName(e.target.value)}
                               value={name}
-                              // onChange={(e) => setName(e.target.value)}
-                              // sx={{ my: 0 }}
                               fullWidth
                               required
                             />
                             <Stack
-                              direction="row"
+                              direction={{
+                                md: "row",
+                                sm: "column",
+                                xs: "column",
+                              }}
                               alignItems={{
                                 lg: "center",
                                 md: "center",
-                                sm: "center",
+                                sm: "start",
+                                xs: "start",
                               }}
-                              justifyContent={{ md: "start", sm: "start" }}
+                              justifyContent={{
+                                md: "start",
+                                sm: "start",
+                                xs: "start",
+                              }}
                               gap={1}
                             >
                               <FormLabel>Shipping</FormLabel>
@@ -428,7 +448,11 @@ const AllProducts = () => {
                                 onChange={(e) => setShipping(e.target.value)}
                               >
                                 <Stack
-                                  direction="row"
+                                  direction={{
+                                    md: "row",
+                                    sm: "column",
+                                    xs: "column",
+                                  }}
                                   alignItems={{
                                     lg: "center",
                                     md: "start",
@@ -580,15 +604,34 @@ const AllProducts = () => {
                             />
                           </Stack>
 
-                          <Button
-                            variant="outlined"
-                            color="secondary"
-                            type="submit"
-                            onClick={handleSubmit}
-                            sx={{ mb: 2 }}
+                          <Stack
+                            direction={{
+                              md: "row",
+                              sm: "column",
+                              xs: "column",
+                            }}
+                            justifyContent={"space-between"}
+                            alignItems={{ md: "center", xs: "start" }}
                           >
-                            Submit
-                          </Button>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              type="submit"
+                              onClick={handleSubmit}
+                              sx={{ mb: 2 }}
+                            >
+                              Update
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              type="submit"
+                              onClick={handleDelete}
+                              sx={{ mb: 2 }}
+                            >
+                              Delete
+                            </Button>
+                          </Stack>
                         </form>
                       </FormControl>
                     )}
@@ -627,9 +670,6 @@ const AllProducts = () => {
                   justifyContent: "start",
                 }}
                 gap={4}
-                // alignItems={"stretch"}
-                // justifyContent={"space-evenly"}
-                // useFlexGap
                 flexWrap="wrap"
               >
                 {product.slice(start, end).map((product) => {
