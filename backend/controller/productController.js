@@ -222,6 +222,38 @@ export const updateProductController = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+export const productFilterController = async (req, res) => {
+  try {
+    let { checked, radio } = req.body;
+    console.log("radio:", radio);
+    console.log("checked:", checked);
+    let args = {};
+    if (checked.length > 0) {
+      args.category = checked;
+    }
+
+    if (radio) {
+      // radio = radio[0].split(',').map(Number); // convert radio to an array of numbers
+      args.price = {
+        $gte: radio[0],
+        $lte: radio[1],
+      };
+    }
+
+    console.log("args:", args);
+
+    const products = await productmodel
+      .find(args)
+      .populate("category")
+      .select("-photo")
+      .sort({ createdAt: -1 });
+    console.log("products:", products);
+    res.status(200).json({ success: true, products: products });
+  } catch (err) {
+    console.log("error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 export default {
   createProductController,
@@ -230,4 +262,5 @@ export default {
   getAllProductController,
   getSingleProductController,
   productPhotoController,
+  productFilterController,
 };

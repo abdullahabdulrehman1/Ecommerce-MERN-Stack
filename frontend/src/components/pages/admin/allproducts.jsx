@@ -19,18 +19,19 @@ import {
   InputAdornment,
   FormLabel,
   CircularProgress,
-  Typography,
+  Pagination,
   Divider,
   Box,
-  Button,
-  Card,
-  Pagination,
-  CardContent,
-  Container,
-  CardMedia,
-  CardActionArea,
-  CardActions,
 } from "@mui/material";
+import AspectRatio from "@mui/joy/AspectRatio";
+import Button from "@mui/joy/Button";
+import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import CardOverflow from "@mui/joy/CardOverflow";
+import Chip from "@mui/joy/Chip";
+import Link from "@mui/joy/Link";
+import Typography from "@mui/joy/Typography";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Modal as BaseModal } from "@mui/base/Modal";
@@ -286,6 +287,7 @@ const AllProducts = () => {
               quantity: product.quantity,
               price: product.price,
               slug: product.slug,
+              category: product.category,
             };
           })
         )
@@ -328,7 +330,9 @@ const AllProducts = () => {
     }
   };
   return (
-    <Layout title={"Ecommerce | Create-Category"}>
+    <Layout
+      title={open ? "Ecommerce | Update-Product" : "Ecommerce | All-Products"}
+    >
       <div className="container border border-black mx-auto rounded-lg">
         <div>
           <Modal
@@ -352,6 +356,7 @@ const AllProducts = () => {
                     <Typography variant="h5" color="initial">
                       Update Product{" "}
                     </Typography>
+
                     <Divider sx={{ marginY: "10px" }} />
                     {loading ? (
                       <Box
@@ -646,8 +651,8 @@ const AllProducts = () => {
           <div className="lg:col-span-3 md:col-span-3 col-span-12 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="lg:col-span-9 md:col-span-9 flex-col ml-10 flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
-            <Typography variant="h5" sx={{ mt: 2 }}>
+          <div className="lg:col-span-9 md:col-span-9 flex-col m-2  flex-wrap  col-span-12 p-2 ">
+            <Typography level="h3" fontWeight="thin" sx={{ mt: 2 }}>
               All Products
             </Typography>
             <Divider sx={{ my: 2 }} />
@@ -667,7 +672,8 @@ const AllProducts = () => {
                 sx={{
                   display: "inline-list-item",
                   flexWrap: "wrap",
-                  justifyContent: "start",
+                  justifyContent: "space-between",
+                  alignContent: "center",
                 }}
                 gap={4}
                 flexWrap="wrap"
@@ -685,64 +691,61 @@ const AllProducts = () => {
                       }}
                     >
                       <Card
-                        sx={{
-                          minWidth: 210,
-                          maxWidth: 210,
-                          maxHeight: 350,
-                          minHeight: 350,
-                          backgroundColor: "#f7f7f7",
-                          // my: 4,
-                          border: "none",
-                          borderRadius: "20px",
-                          boxShadow:
-                            "10px 10px 15px 2px rgba(150, 247, 208, 0.8)",
-                        }}
+                        sx={{ minWidth: 220, maxWidth: 220, boxShadow: "lg" }}
                       >
-                        <CardActionArea>
-                          <CardMedia
-                            component="img"
-                            height="130"
-                            sx={{
-                              minHeight: 180,
-                              maxHeight: 180,
-                              objectFit: "cover",
-                              boxShadow: "2px 0.5px 5px ",
-                              borderRadius: "20px",
-                            }}
-                            image={`${url}/product/getphotoproduct/${product.id}`}
-                            alt="green iguana"
-                          />
-                          <CardContent sx={{ paddingX: 3 }}>
-                            <Typography
-                              gutterBottom
-                              variant="h6"
-                              align="justify"
-                              component="div"
-                              overflow={"clip"}
-                            >
-                              {product.name}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              align="justify"
-                              color="text.secondary"
-                              sx={{ maxLines: 3, textOverflow: "ellipsis" }}
-                            >
-                              {product.description}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                        <CardActions>
-                          <Typography
-                            gutterBottom
-                            variant="body1"
-                            align="justify"
-                            component="div"
-                            overflow={"clip"}
-                          >
-                            $ {product.price}
+                        <CardOverflow>
+                          <AspectRatio sx={{ minWidth: 220   }}>
+                            <img
+                              src={`${url}/product/getphotoproduct/${product.id}`}
+                              loading="lazy"
+                              alt=""
+                            />
+                          </AspectRatio>
+                        </CardOverflow>
+                        <CardContent>
+                          <Typography level="body-xs">
+                            {product.category.name}
                           </Typography>
-                        </CardActions>
+                          <Link
+                            href="#product-card"
+                            fontWeight="md"
+                            color="neutral"
+                            textColor="text.primary"
+                            overlay
+                            // endDecorator={<ArrowOutwardIcon />}
+                          >
+                            {product.name}
+                          </Link>
+
+                          <Typography
+                            level="title-lg"
+                            sx={{ mt: 1, fontWeight: "xl" }}
+                            endDecorator={
+                              <Chip
+                                component="span"
+                                size="sm"
+                                variant="soft"
+                                color="success"
+                              >
+                                Lowest price
+                              </Chip>
+                            }
+                          >
+                            {product.price} PKR
+                          </Typography>
+                          <Typography level="body-sm">
+                            (Only <b>7</b> left in stock!)
+                          </Typography>
+                        </CardContent>
+                        <CardOverflow>
+                          <Button
+                            variant="solid"
+                            sx={{ backgroundColor: "#1D1F1D" }}
+                            size="lg"
+                          >
+                            Update
+                          </Button>
+                        </CardOverflow>
                       </Card>
                     </Stack>
                   );

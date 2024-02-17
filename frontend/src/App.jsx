@@ -43,7 +43,7 @@ const App = () => {
           <Route path="user/profile" element={<UserProfile />} />
         </Route>
         <Route path={`/dashboard/`} element={<AdminRoute />}>
-          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin" element={<CreateCategory />} />
           <Route path="admin/create-category" element={<CreateCategory />} />
           <Route path="admin/create-product" element={<CreateProduct />} />
           <Route path="admin/allusers" element={<User />} />

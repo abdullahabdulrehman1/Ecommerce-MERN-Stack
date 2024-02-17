@@ -1,92 +1,373 @@
-// import * as React from "react";
 import axios from "axios";
-import { useAuth, } from "../../context/authRoute";
+import { useAuth } from "../../context/authRoute";
 import Layout from "../layout/layout";
 import React, { useEffect, useState } from "react";
-import { stringify } from "postcss";
 import url from "../../utils/exporturl";
-// import url from "../../utils/exporturl";
-// import { useAuth } from "../../context/authRoute";
-// import { useAuth } from "../../context/authRoute";
+import { Divider } from "@mui/material";
+import { Box } from "@mui/material";
+import { Pagination } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import { Stack } from "@mui/material";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import AspectRatio from "@mui/joy/AspectRatio";
+import Button from "@mui/joy/Button";
+import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import CardOverflow from "@mui/joy/CardOverflow";
+import Chip from "@mui/joy/Chip";
+import Link from "@mui/joy/Link";
+import Typography from "@mui/joy/Typography";
+import { prices } from "./price";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+
 const Home = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   // const { user, token, auth ,tokenexpiration} = useStateContext();
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [success, setsuccess] = useState(false);
-  console.log(isloggedin);
-  console.log(authuser);
-  const AuthCheck=async()=>{
-    if(token){
-      axios.defaults.headers.common["Authorization"] = token;
-      const response = await axios.get(`${url}/auth/user-auth`);
-      if(response.data.success === true){
-        setauthuser(response.data.user);
-        setisloggedin(true);
-        setsuccess(true);
-    }
-    else{
-      setsuccess(false);
-      setisloggedin(false);
-      localStorage.removeItem("token");
-    }
-  }
-  }
-  useEffect(() => {
-  AuthCheck();
-  }, []);
+  const [product, setProduct] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [page, setPage] = useState(1);
+  const itemperpage = 10;
+  const start = (page - 1) * itemperpage;
+  const end = start + itemperpage;
 
-  const [seconds, setSeconds] = useState(authuser ? authuser.iat : 0);
-  
-  useEffect(() => {
-    let interval = authuser.iat ? null : null;
-    if (authuser.iat) {
-      interval += setInterval(() => {
-        setSeconds(seconds => seconds + 1);
-      }, 1000);
-    } else if (!authuser.iat && seconds !== 0) {
-      clearInterval(interval);
+  const AuthCheck = async () => {
+    try {
+      setLoading(true);
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = token;
+        const res = await axios.get(`${url}/auth/user-auth`);
+        setauthuser(res.data.user);
+        setisloggedin(true);
+        console.log(res.data);
+        console.log(res.data.message);
+        console.log(res.data.success);
+        console.log(res.data);
+
+        if (res.data.success === true) {
+          setsuccess(true);
+        } else {
+          localStorage.removeItem("token");
+          setsuccess(false);
+        }
+      }
+    } catch (err) {
+      if (err.response && err.response.data.success === false) {
+        localStorage.removeItem("token");
+        setsuccess(false);
+      }
+    } finally {
+      setLoading(false);
     }
-    return () => clearInterval(interval);
-  }, [authuser, seconds]);
-  
-  const [leftseconds, setleftSeconds] = useState(authuser ? parseInt(authuser.exp) : 0);
+  };
   useEffect(() => {
-    let interval = authuser.exp ? null : null;
-    if (authuser.exp) {
-      interval += setInterval(() => {
-        setleftSeconds(()=>authuser.exp - date.getSeconds());
-      }, 1000);
-    } else if (!authuser.exp && leftseconds !== 0) {
-      clearInterval(interval);
+    AuthCheck();
+  }, []);
+  const handleOpen = (slug) => {
+    console.log(slug);
+  };
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+  const getAllCategories = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.get(`${url}/category/getcategory`);
+      setLoading(false);
+
+      return (
+        setLoading(false),
+        setCategories(
+          response.data.allCategory.map((category) => {
+            return {
+              id: category._id,
+              name: category.name,
+            };
+          })
+        )
+      );
+    } catch (error) {
+      setLoading(false);
+      console.log("getAllCategories function error: " + error);
     }
-    return () => clearInterval(interval);
-  }, [authuser, leftseconds]);
-  const date = new Date()
+  };
+  const getAllProducts = async () => {
+    // setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.get(`${url}/product/getallproduct`);
+      const data = response.data;
+      return (
+        // setLoading(false),
+        setProduct(
+          data.getproduct.map((product) => {
+            return {
+              _id: product._id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              slug: product.slug,
+              category: product.category,
+            };
+          })
+        )
+      );
+    } catch (error) {
+      // setLoading(false);
+      // setError("Error fetching products");
+      console.log("getAllProducts function error: " + error);
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    getAllCategories();
+  }, []);
+  console.log(categories);
+  const [checked, setChecked] = useState([]);
+  const handlefilter = (value, id) => {
+    let all = [...checked];
+    if (value) {
+      all.push(id);
+    } else {
+      all = all.filter((c) => c !== id);
+    }
+    setChecked(all);
+  };
+  console.log(checked);
+  const [radio, setRadio] = useState([]);
+  console.log(radio);
+  const filterproduct = async () => {
+    try {
+      // setLoading(true);
+      const response = await axios.post(`${url}/product/productfilter`, {
+        checked,
+        radio: parseInt(radio),
+      });
+
+      if (response.data && response.data.products) {
+        setProduct(
+          response.data.products.map((product) => {
+            return {
+              _id: product._id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              slug: product.slug,
+              category: product.category,
+            };
+          })
+        );
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    if (!radio.length || !checked.length) getAllProducts();
+  }, [checked.length, radio.length]);
+  useEffect(() => {
+    setLoading(true);
+    if (radio.length || checked.length) filterproduct();
+  }, [checked, radio]);
+
   return (
     <Layout title={"Home | Ecommerce"}>
-      <main>
-        <div className="container mx-auto">
-          <h1 className="text-3xl my-6 ">HomePage</h1>
-          <h2>LoggedIn: {isloggedin  ? "Logged in" : "Not logged in"}</h2>
-          <h2>
-            Username: {authuser && authuser.name ? authuser.name : "NOTFOUND"}
-          </h2>
-          <h2 className="break-all">
-            User: {authuser ? JSON.stringify(authuser) : "No user"}
-          </h2>
-          <p className="break-all">Token: {token ? token : "No token"}</p>
-          <h2>Role: {token ? authuser.role : "0"}</h2>
-          {/* <h2>Token Expiration: {token ? tokenexpiration : "0"}</h2> */}
-          <h2>Question: {authuser ? authuser.question : "NOT Found" }</h2>
-          <h2>Creation Time: {authuser ? authuser.iat : "NOT Found" }</h2>
-          <h2>Expiration Time: {authuser ? authuser.exp : "NOT Found" }</h2>
-          <h2>Elapsed Time: {seconds}</h2>
-          <h2> Time Left: {leftseconds}</h2>
+      <div className="container border border-black mx-auto rounded-lg">
+        <div className="row grid grid-cols-12 row-span-auto  ">
+          <div className="lg:col-span-3    md:ml-5  sm:m-2  md:col-span-3 col-span-12 row-span-1  m-2 p-2 ">
+            <Typography level="h3" fontWeight="thin" sx={{ mt: 2 }}>
+              Filters
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+            <Box>
+              <Typography level="body-lg" fontWeight="thin" sx={{ mt: 2 }}>
+                Filters by Category
+              </Typography>
+              {categories?.map((category) => {
+                // const category = product.category;
+                return (
+                  <Box key={category.id}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            onChange={(e) =>
+                              handlefilter(e.target.checked, category.id)
+                            }
+                          />
+                        }
+                        label={`${category.name}`}
+                      />
+                    </FormGroup>
+                  </Box>
+                );
+              })}
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box>
+              <Typography level="body-lg" fontWeight="thin" sx={{ mt: 2 }}>
+                Filters by Prices
+              </Typography>
+
+              <RadioGroup
+                value={radio}
+                onChange={(e) => setRadio([e.target.value])}
+                name="radio-buttons-group"
+              >
+                {prices?.map((price) => {
+                  return (
+                    <Box key={price._id}>
+                      <FormControlLabel
+                        value={String(price.array)}
+                        control={<Radio />}
+                        label={price.name}
+                      />
+                    </Box>
+                  );
+                })}
+              </RadioGroup>
+
+              
+            </Box>
+            <Button variant= "contained" onClick={()=> window.location.reload()} >Reset Filters</Button>
+          </div>
+
+          <div className="lg:col-span-9 md:col-span-9    m-2  flex-wrap  col-span-12  pt-2 ">
+            <Typography level="h3" fontWeight="thin" sx={{ mt: 2, mx: 2 }}>
+              All Products
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+            {loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems={"center"}
+                minHeight={300}
+                sx={{ marginY: 2 }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Box
+                p={2}
+                sx={{
+                  display: "inline-list-item",
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                }}
+                gap={4}
+                flexWrap="wrap"
+              >
+                {product?.slice(start, end)?.map((product) => {
+                  return (
+                    <Stack
+                      direction="row"
+                      justifyContent={"start"}
+                      alignItems={"center"}
+                      flexWrap="wrap"
+                      key={product._id}
+                      onClick={() => {
+                        handleOpen(product.slug);
+                      }}
+                    >
+                      <Card
+                        sx={{ minWidth: 220, maxWidth: 220, boxShadow: "lg" }}
+                      >
+                        <CardOverflow>
+                          <AspectRatio sx={{ minWidth: 220 }}>
+                            <img
+                              src={`${url}/product/getphotoproduct/${product._id}`}
+                              loading="lazy"
+                              alt=""
+                            />
+                          </AspectRatio>
+                        </CardOverflow>
+                        <CardContent>
+                          <Typography level="body-xs">
+                            {product.category.name}
+                          </Typography>
+                          <Link
+                            href="#product-card"
+                            fontWeight="md"
+                            color="neutral"
+                            textColor="text.primary"
+                            overlay
+                            // endDecorator={<ArrowOutwardIcon />}
+                          >
+                            {product.name}
+                          </Link>
+
+                          <Typography
+                            level="title-lg"
+                            sx={{ mt: 1, fontWeight: "xl" }}
+                            endDecorator={
+                              <Chip
+                                component="span"
+                                size="sm"
+                                variant="soft"
+                                color="success"
+                              >
+                                Lowest price
+                              </Chip>
+                            }
+                          >
+                            {product.price} PKR
+                          </Typography>
+                          <Typography level="body-sm">
+                            (Only <b>7</b> left in stock!)
+                          </Typography>
+                        </CardContent>
+                        <CardOverflow>
+                          <Button
+                            variant="solid"
+                            sx={{ backgroundColor: "#1D1F1D" }}
+                            size="lg"
+                          >
+                            Add to cart
+                          </Button>
+                        </CardOverflow>
+                      </Card>
+                    </Stack>
+                  );
+                })}
+              </Box>
+            )}
+            <Box
+              display="flex"
+              justifyContent="flex-end"
+              alignItems={"center"}
+              sx={{ marginY: 2 }}
+            >
+              {loading ? (
+                <></>
+              ) : (
+                <Pagination
+                  count={Math.ceil(product.length / itemperpage)}
+                  page={page}
+                  onChange={handleChange}
+                  color="primary"
+                />
+              )}
+            </Box>
+          </div>
         </div>
-      </main>
+      </div>
     </Layout>
   );
 };
-
 export default Home;

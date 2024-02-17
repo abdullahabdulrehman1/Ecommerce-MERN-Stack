@@ -9,6 +9,7 @@ import {
   getAllProductController,
   updateProductController,
   deleteProductController,
+  productFilterController,
 } from "../controller/productController.js";
 
 const router = express.Router();
@@ -20,11 +21,11 @@ router.post(
   formidable(),
   createProductController
 );
-router.get("/getallproduct", requireSignin, isAdmin, getAllProductController);
+router.get("/getallproduct",  getAllProductController);
 router.get(
   "/getsingleproduct/:slug",
-  requireSignin,
-  isAdmin,
+  // requireSignin,
+  // isAdmin,
   getSingleProductController
 );
 router.get(
@@ -46,5 +47,7 @@ router.put(
   formidable(),
   updateProductController
 );
+router.post("/productfilter", productFilterController);
+
 
 export default router;

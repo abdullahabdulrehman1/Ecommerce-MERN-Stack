@@ -16,7 +16,6 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-
 export const AuthProvider = ({ children }) => {
   // const [state, dispatch] = useReducer(reducer, initialState);
   // const [loading, setLoading] = useState(true); // Add this line
