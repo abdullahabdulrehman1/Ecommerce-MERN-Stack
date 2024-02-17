@@ -11,7 +11,6 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [trueerror, settrueError] = useState("");
   const location = useLocation();
-  //   const [auth, setauth] = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     newpassword: "",
@@ -40,10 +39,7 @@ const ForgotPassword = () => {
       question,
     };
     try {
-      const res = await axios.post(
-        `${url}/auth/forgot-password`,
-        formData
-      );
+      const res = await axios.post(`${url}/auth/forgot-password`, formData);
       if (res && res.data) {
         settrueError(`${res.data.message}`);
         setTimeout(() => {
@@ -60,7 +56,7 @@ const ForgotPassword = () => {
         // if (location.state && location.state.from === "/dashboard") {
         //   navigate("/dashboard");
         // } else {
-          navigate("/login");
+        navigate("/login");
         // }
       } else {
         setError(`${res.data.message}`);
@@ -80,7 +76,7 @@ const ForgotPassword = () => {
   return (
     // <div>ForgotPassword</div>
     <Layout title={"Forgot Password | Ecommerce"}>
-      <div className="dark:bg-gray-900  light:bg-white-500">
+      <div className="  light:bg-white-500">
         <div className="flex flex-col items-center justify-center px-6 py-0 mx-auto md:h-5/6 md:my-20 lg:py-0">
           <a
             href="#"
@@ -94,16 +90,16 @@ const ForgotPassword = () => {
             Ecommerce
           </a>
 
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
                 Forgot Password
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
                   >
                     Your email
                   </label>
@@ -122,7 +118,7 @@ const ForgotPassword = () => {
                 <div>
                   <label
                     htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
                   >
                     New Password
                   </label>
@@ -139,7 +135,7 @@ const ForgotPassword = () => {
                 <div>
                   <label
                     htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
                   >
                     Security Question
                   </label>
@@ -168,7 +164,7 @@ const ForgotPassword = () => {
                     // value={submit}
 
                     // onClick={handleSubmit}
-                    className="w-full py-3 text-white bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
+                    className="w-full py-3  bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
                   >
                     Change Password
                   </button>
