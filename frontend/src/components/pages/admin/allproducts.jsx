@@ -287,7 +287,10 @@ const AllProducts = () => {
               quantity: product.quantity,
               price: product.price,
               slug: product.slug,
+<<<<<<< HEAD
               category: product.category,
+=======
+>>>>>>> 556914f9b6d453eaa7fc711021d9bfa6c6a7ffb9
             };
           })
         )
