@@ -89,7 +89,7 @@ export const getAllProductController = async (req, res) => {
       .populate("category")
       .select("-photo")
       .limit()
-      .sort({ createdAt:  -1 });
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, getproduct });
   } catch (err) {
     console.log("get all product error: " + err);
@@ -99,9 +99,6 @@ export const getAllProductController = async (req, res) => {
 //get single product
 export const getSingleProductController = async (req, res) => {
   try {
-    // const {slug} = req.params.slug;
-    // console.log(slug)
-    // const slug = slugify(name);
     const singleProduct = await productmodel
       .findOne({ slug: req.params.slug })
       .populate("category")
@@ -117,9 +114,6 @@ export const getSingleProductController = async (req, res) => {
 };
 export const productPhotoController = async (req, res) => {
   try {
-    // const { slug } = req.params.pid;
-    // const product = await productmodel.findOne
-
     const product = await productmodel.findById(req.params.pid).select("photo");
     // ({ slug });
     if (!product) {
@@ -164,8 +158,6 @@ export const updateProductController = async (req, res) => {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-
-    // Check if all required fields are present
     if (!name) {
       return res
         .status(400)
@@ -184,45 +176,36 @@ export const updateProductController = async (req, res) => {
         .json({ success: false, message: "Price is required" });
     }
 
-    if (!category) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Category is required" });
-    }
-
     if (!quantity) {
       return res
         .status(400)
         .json({ success: false, message: "Quantity is required" });
     }
 
-    if (!shipping) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Shipping is required" });
-    }
-
-    if (!photo) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Photo is required" });
-    }
-
     // const  product = await productmodel.findById(req.params.pid);
-    const productmodelcategory = await categorymodel.findOne({ name: "stand" });
+    const productmodelcategory = await categorymodel.findOne({
+      name: slugify(category),
+    });
     const productdetail = await productmodel.findByIdAndUpdate(
       req.params.pid,
       {
         ...req.fields,
         category: productmodelcategory._id,
         slug: slugify(name),
-        photo: {
-          data: fs.readFileSync(photo.path),
-          contentType: photo.type,
-        },
+        ...(photo
+          ? {
+              photo: {
+                data: fs.readFileSync(photo.path),
+                contentType: photo.type,
+              },
+            }
+          : {
+              photo: photo, // Use previous photo if new photo is not provided
+            }),
       },
       { new: true }
     );
+
     if (!productdetail) {
       return res
         .status(404)
