@@ -222,7 +222,7 @@ const CreateProduct = () => {
                     sx={{ mb: 4 }}
                   />
                   <div className="mb-8">
-                    <label className=" p-2 rounded-lg ">
+                    <label className="p-0 rounded-lg ">
                       {photo ? (
                         <Typography
                           variant="body2"

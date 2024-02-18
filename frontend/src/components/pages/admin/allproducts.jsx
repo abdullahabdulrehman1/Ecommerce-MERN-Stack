@@ -352,10 +352,9 @@ const AllProducts = () => {
                   {/* <AdminMenu /> */}
                   {/* </div> */}
                   <div className=" flex-col  md:mx-2  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10  pt-2 ">
-                    <Typography variant="h5" color="initial">
-                      Update Product{" "}
+                    <Typography level="h3" fontWeight="thin" sx={{ mt: 2 }}>
+                      Update Product
                     </Typography>
-
                     <Divider sx={{ marginY: "10px" }} />
                     {loading ? (
                       <Box
@@ -618,7 +617,7 @@ const AllProducts = () => {
                             alignItems={{ md: "center", xs: "start" }}
                           >
                             <Button
-                              variant="contained"
+                              variant="solid"
                               color="success"
                               type="submit"
                               onClick={handleSubmit}
@@ -627,8 +626,8 @@ const AllProducts = () => {
                               Update
                             </Button>
                             <Button
-                              variant="contained"
-                              color="error"
+                              variant="solid"
+                              color="danger"
                               type="submit"
                               onClick={handleDelete}
                               sx={{ mb: 2 }}

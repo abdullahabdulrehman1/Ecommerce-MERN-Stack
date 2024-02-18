@@ -35,6 +35,6 @@ export const prices = [
     {
         _id: 5,
         name: "More than PKR 5000",
-        array: [5001, 15000]
+        array: [5001, 1000000]
     }
 ];

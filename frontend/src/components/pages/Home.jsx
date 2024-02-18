@@ -29,8 +29,20 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useSearch } from "../../context/searchRoute";
+import clsx from "clsx";
+import { Modal as BaseModal } from "@mui/base/Modal";
+import { get } from "superagent";
+import ProductModal from "../../utils/productmodal";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import { css } from "@mui/system";
+
+import Modal from "@mui/material/Modal";
 // import { TextField } from '@mui/material/TextField';
 const Home = () => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpenModal = () => setOpen(true);
+  const handleCloseModal = () => setOpen(false);
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
@@ -40,7 +52,23 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const itemperpage = 10;
   const start = (page - 1) * itemperpage;
+  const [slug, setSlug] = useState("");
   const end = start + itemperpage;
+  const Backdrop = React.forwardRef((props, ref) => {
+    const { open, className, ...other } = props;
+    return (
+      <div
+        className={clsx({ "base-Backdrop-open": open }, className)}
+        ref={ref}
+        {...other}
+      />
+    );
+  });
+
+  Backdrop.propTypes = {
+    className: PropTypes.string.isRequired,
+    open: PropTypes.bool,
+  };
 
   const AuthCheck = async () => {
     try {
@@ -76,12 +104,14 @@ const Home = () => {
   }, []);
   const handleOpen = (slug) => {
     console.log(slug);
+    setSlug(slug);
+getSingleProduct(slug);
   };
 
   const handleChange = (event, value) => {
     setPage(value);
   };
-  const [open, setOpen] = React.useState(true);
+  const [openCategory, setOpenCategory] = React.useState(true);
 
   const handleClick = () => {
     setOpen(!open);
@@ -90,6 +120,9 @@ const Home = () => {
 
   const handleClick2 = () => {
     setOpenPriceFilter(!openPriceFilter);
+  };
+  const handleClickCategory = () => {
+    setOpenCategory(!openCategory);
   };
 
   const getAllCategories = async () => {
@@ -117,6 +150,9 @@ const Home = () => {
       console.log("getAllCategories function error: " + error);
     }
   };
+  const [singleProduct, setSingleProduct] = useState([]);
+  
+
   const getAllProducts = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -235,9 +271,73 @@ const Home = () => {
 
     fetchProducts();
   }, [search]);
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+  };
+  const getSingleProduct = async (slug) => {
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.get(
+        `${url}/product/getsingleproduct/${slug}`
+      );
+      const data = response.data;
+      return (
+        setLoading(false),
+        console.log(data),
+        setSingleProduct({
+          id: data.singleProduct._id,
+          name: data.singleProduct.name,
+          description: data.singleProduct.description,
+          quantity: data.singleProduct.quantity,
+          price: data.singleProduct.price,
+          slug: data.singleProduct.slug,
+        })
+      );
+    } catch (error) {
+      setLoading(false);
+      setError("Error fetching products");
+      console.log("getSingleProduct function error: " + error);
+    }
+  };
+
   return (
-    <Layout title={"Home | Ecommerce"}>
+    <Layout title={open ? "Ecommerce | Product " : "Ecommerce | Home"}>
       <div className="container border border-black mx-auto rounded-lg">
+        <div>
+          {/* <Button onClick={handleOpenModal}>Open Child Modal</Button> */}
+          <Modal
+            open={open}
+            onClose={handleCloseModal}
+            aria-labelledby="child-modal-title"
+            aria-describedby="child-modal-description"
+          >
+            <Box sx={{ ...style, width: "80%", height: "80%" }}>
+             {
+                singleProduct&&(
+
+                  <div>
+                    <h1>{singleProduct.name}</h1>
+                    <p>{singleProduct.description}</p>
+                    <p>{singleProduct.price}</p>
+                    <p>{singleProduct.quantity}</p>
+                    {/* <img src={`${url}/product/getphotoproduct/${singleProduct.id}`} alt="" height={/> */}
+                  </div>
+                )
+             }
+              
+            </Box>
+          </Modal>
+        </div>
         <div className="row grid grid-cols-12 row-span-auto  ">
           <div className="lg:col-span-3    md:ml-5  sm:m-2  md:col-span-3 col-span-12 row-span-1  m-2 p-2 ">
             <Typography level="h3" fontWeight="thin" sx={{ mt: 2 }}>
@@ -254,14 +354,14 @@ const Home = () => {
               fullWidth
             />
             <Box>
-              <ListItemButton onClick={handleClick}>
+              <ListItemButton onClick={handleClickCategory}>
                 <ListItemText primary="Filter By Category" />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {openCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               {categories?.map((category) => {
                 return (
                   <Box key={category.id} sx={{ ml: 2 }}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Collapse in={openCategory} timeout="auto" unmountOnExit>
                       <FormGroup>
                         <FormControlLabel
                           control={
@@ -380,6 +480,9 @@ const Home = () => {
                               maxWidth: 220,
                               boxShadow: "lg",
                             }}
+                            onClick={() => {
+                              handleOpen(product.slug);
+                            }}
                           >
                             <CardOverflow>
                               <AspectRatio sx={{ minWidth: 220 }}>
@@ -390,7 +493,7 @@ const Home = () => {
                                 />
                               </AspectRatio>
                             </CardOverflow>
-                            <CardContent>
+                            <CardContent onClick={handleOpenModal}>
                               <Typography level="body-xs">
                                 {product.category.name}
                               </Typography>
@@ -425,6 +528,7 @@ const Home = () => {
                                 (Only <b>7</b> left in stock!)
                               </Typography>
                             </CardContent>
+
                             <CardOverflow>
                               <Button
                                 variant="solid"

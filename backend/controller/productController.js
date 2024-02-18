@@ -270,7 +270,7 @@ export const productSearchController = async (req, res) => {
         { name: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
       ],
-    }).select("-photo");
+    }).select("-photo").populate("category");
     if (!products) {
       return res
         .status(200)
