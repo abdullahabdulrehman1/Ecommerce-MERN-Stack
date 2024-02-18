@@ -31,7 +31,6 @@ import CardOverflow from "@mui/joy/CardOverflow";
 import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Modal as BaseModal } from "@mui/base/Modal";

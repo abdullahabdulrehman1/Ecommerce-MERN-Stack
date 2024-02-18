@@ -1,13 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { ToastContainer } from 'react-toastify'
-import { AuthProvider } from './context/authRoute.jsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/authRoute.jsx";
+import { SearchProvider } from "./context/searchRoute.jsx";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <ToastContainer />
-    <App />
+    <SearchProvider>
+      <ToastContainer />
+      <App />
+    </SearchProvider>
   </AuthProvider>
-)
+);

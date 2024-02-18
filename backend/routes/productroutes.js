@@ -10,6 +10,7 @@ import {
   updateProductController,
   deleteProductController,
   productFilterController,
+  productSearchController,
 } from "../controller/productController.js";
 
 const router = express.Router();
@@ -21,7 +22,7 @@ router.post(
   formidable(),
   createProductController
 );
-router.get("/getallproduct",  getAllProductController);
+router.get("/getallproduct", getAllProductController);
 router.get(
   "/getsingleproduct/:slug",
   // requireSignin,
@@ -48,6 +49,6 @@ router.put(
   updateProductController
 );
 router.post("/productfilter", productFilterController);
-
+router.get("/productsearch/:query", productSearchController);
 
 export default router;

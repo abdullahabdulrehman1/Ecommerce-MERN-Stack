@@ -257,6 +257,31 @@ console.log("products:", products);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+export const productSearchController = async (req, res) => {
+  try {
+    const { query } = req.params;
+    if (!query) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please provide a search query" });
+    }
+    const products = await productmodel.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
+    }).select("-photo");
+    if (!products) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No products found", products: []});
+    }
+    res.status(200).json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 
 export default {
   createProductController,
@@ -266,4 +291,5 @@ export default {
   getSingleProductController,
   productPhotoController,
   productFilterController,
+  productSearchController
 };

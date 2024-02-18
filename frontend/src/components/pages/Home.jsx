@@ -19,6 +19,7 @@ import Chip from "@mui/joy/Chip";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 import { prices } from "./price";
+import TextField from "@mui/material/TextField";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { toast } from "react-toastify";
@@ -27,6 +28,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useSearch } from "../../context/searchRoute";
+// import { TextField } from '@mui/material/TextField';
 const Home = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const token = localStorage.getItem("token");
@@ -115,7 +118,6 @@ const Home = () => {
     }
   };
   const getAllProducts = async () => {
-    // setLoading(true);
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
@@ -204,7 +206,35 @@ const Home = () => {
     // console.log(product)
     if (radio.length || checked.length) filterproduct();
   }, [checked, radio]);
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (search) {
+        const response = await axios.get(
+          `${url}/product/productsearch/${search}`
+        );
+        setProducts(
+          response.data.products.map((product) => {
+            return {
+              _id: product._id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              slug: product.slug,
+              category: product.category,
+            };
+          })
+        );
+      } else {
+        setProducts([]);
+      }
+    };
+
+    fetchProducts();
+  }, [search]);
   return (
     <Layout title={"Home | Ecommerce"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -214,13 +244,21 @@ const Home = () => {
               Filters
             </Typography>
             <Divider sx={{ my: 2 }} />
+            <TextField
+              type="text"
+              variant="outlined"
+              color="primary"
+              label="Search Products"
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
+              fullWidth
+            />
             <Box>
               <ListItemButton onClick={handleClick}>
                 <ListItemText primary="Filter By Category" />
                 {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               {categories?.map((category) => {
-                // const category = product.category;
                 return (
                   <Box key={category.id} sx={{ ml: 2 }}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
@@ -309,78 +347,98 @@ const Home = () => {
                 gap={5}
                 flexWrap="wrap"
               >
-                {product?.slice(start, end)?.map((product) => {
-                  return (
-                    <Stack
-                      direction="row"
-                      justifyContent={"flex"}
-                      alignItems={"center"}
-                      flexWrap="wrap"
-                      key={product._id}
-                      onClick={() => {
-                        handleOpen(product.slug);
-                      }}
-                    >
-                      <Card
-                        sx={{ minWidth: 220, maxWidth: 220, boxShadow: "lg" }}
-                      >
-                        <CardOverflow>
-                          <AspectRatio sx={{ minWidth: 220 }}>
-                            <img
-                              src={`${url}/product/getphotoproduct/${product._id}`}
-                              loading="lazy"
-                              alt=""
-                            />
-                          </AspectRatio>
-                        </CardOverflow>
-                        <CardContent>
-                          <Typography level="body-xs">
-                            {product.category.name}
-                          </Typography>
-                          <Link
-                            href="#product-card"
-                            fontWeight="md"
-                            color="neutral"
-                            textColor="text.primary"
-                            overlay
-                            // endDecorator={<ArrowOutwardIcon />}
+                {/* {(<></>)} */}
+                {products.length === 0 && search ? (
+                  <Stack
+                    // display="flex"
+                    justifyContent="center"
+                    marginX={"100px"}
+                    alignItems={"center"}
+                    minHeight={300}
+                    sx={{ marginY: 2 }}
+                  >
+                    <Typography level="h4">No products found</Typography>
+                  </Stack>
+                ) : (
+                  (products.length === 0 ? product : products)
+                    ?.slice(start, end)
+                    ?.map((product) => {
+                      return (
+                        <Stack
+                          direction="row"
+                          justifyContent={"flex"}
+                          alignItems={"center"}
+                          flexWrap="wrap"
+                          key={product._id}
+                          onClick={() => {
+                            handleOpen(product.slug);
+                          }}
+                        >
+                          <Card
+                            sx={{
+                              minWidth: 220,
+                              maxWidth: 220,
+                              boxShadow: "lg",
+                            }}
                           >
-                            {product.name}
-                          </Link>
-
-                          <Typography
-                            level="title-lg"
-                            sx={{ mt: 1, fontWeight: "xl" }}
-                            endDecorator={
-                              <Chip
-                                component="span"
-                                size="sm"
-                                variant="soft"
-                                color="success"
+                            <CardOverflow>
+                              <AspectRatio sx={{ minWidth: 220 }}>
+                                <img
+                                  src={`${url}/product/getphotoproduct/${product._id}`}
+                                  loading="lazy"
+                                  alt=""
+                                />
+                              </AspectRatio>
+                            </CardOverflow>
+                            <CardContent>
+                              <Typography level="body-xs">
+                                {product.category.name}
+                              </Typography>
+                              <Link
+                                href="#product-card"
+                                fontWeight="md"
+                                color="neutral"
+                                textColor="text.primary"
+                                overlay
+                                // endDecorator={<ArrowOutwardIcon />}
                               >
-                                Lowest price
-                              </Chip>
-                            }
-                          >
-                            {product.price} PKR
-                          </Typography>
-                          <Typography level="body-sm">
-                            (Only <b>7</b> left in stock!)
-                          </Typography>
-                        </CardContent>
-                        <CardOverflow>
-                          <Button
-                            variant="solid"
-                            sx={{ backgroundColor: "#1D1F1D" }}
-                            size="lg"
-                          >
-                            Add to cart
-                          </Button>
-                        </CardOverflow>
-                      </Card>
-                    </Stack>
-                  );
-                })}
+                                {product.name}
+                              </Link>
+
+                              <Typography
+                                level="title-lg"
+                                sx={{ mt: 1, fontWeight: "xl" }}
+                                endDecorator={
+                                  <Chip
+                                    component="span"
+                                    size="sm"
+                                    variant="soft"
+                                    color="success"
+                                  >
+                                    Lowest price
+                                  </Chip>
+                                }
+                              >
+                                {product.price} PKR
+                              </Typography>
+                              <Typography level="body-sm">
+                                (Only <b>7</b> left in stock!)
+                              </Typography>
+                            </CardContent>
+                            <CardOverflow>
+                              <Button
+                                variant="solid"
+                                sx={{ backgroundColor: "#1D1F1D" }}
+                                size="lg"
+                              >
+                                Add to cart
+                              </Button>
+                            </CardOverflow>
+                          </Card>
+                        </Stack>
+                      );
+                    })
+                )}
               </Box>
             )}
             <Box
@@ -389,7 +447,7 @@ const Home = () => {
               alignItems={"center"}
               sx={{ marginY: 2 }}
             >
-              {product.length === 0 ? (
+              {product.length === 0 || products.length === 0 || search ? (
                 <></>
               ) : (
                 <Pagination
