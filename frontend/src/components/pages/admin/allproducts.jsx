@@ -672,10 +672,10 @@ const AllProducts = () => {
                 sx={{
                   display: "inline-list-item",
                   flexWrap: "wrap",
-                  justifyContent: "space-between",
+                  justifyContent: "start",
                   alignContent: "center",
                 }}
-                gap={4}
+                gap={5}
                 flexWrap="wrap"
               >
                 {product.slice(start, end).map((product) => {
@@ -694,7 +694,7 @@ const AllProducts = () => {
                         sx={{ minWidth: 220, maxWidth: 220, boxShadow: "lg" }}
                       >
                         <CardOverflow>
-                          <AspectRatio sx={{ minWidth: 220   }}>
+                          <AspectRatio sx={{ minWidth: 220 }}>
                             <img
                               src={`${url}/product/getphotoproduct/${product.id}`}
                               loading="lazy"

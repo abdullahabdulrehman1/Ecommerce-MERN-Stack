@@ -6,7 +6,6 @@ import url from "../../utils/exporturl";
 import { Divider } from "@mui/material";
 import { Box } from "@mui/material";
 import { Pagination } from "@mui/material";
-import { CircularProgress } from "@mui/material";
 import { Stack } from "@mui/material";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -22,10 +21,14 @@ import Typography from "@mui/joy/Typography";
 import { prices } from "./price";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-
+import { toast } from "react-toastify";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 const Home = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
-  // const { user, token, auth ,tokenexpiration} = useStateContext();
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [success, setsuccess] = useState(false);
@@ -38,7 +41,7 @@ const Home = () => {
 
   const AuthCheck = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       if (token) {
         axios.defaults.headers.common["Authorization"] = token;
         const res = await axios.get(`${url}/auth/user-auth`);
@@ -75,8 +78,20 @@ const Home = () => {
   const handleChange = (event, value) => {
     setPage(value);
   };
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+  const [openPriceFilter, setOpenPriceFilter] = React.useState(true);
+
+  const handleClick2 = () => {
+    setOpenPriceFilter(!openPriceFilter);
+  };
+
   const getAllCategories = async () => {
-    setLoading(true);
+    // setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = token;
@@ -107,7 +122,7 @@ const Home = () => {
       const response = await axios.get(`${url}/product/getallproduct`);
       const data = response.data;
       return (
-        // setLoading(false),
+        setLoading(false),
         setProduct(
           data.getproduct.map((product) => {
             return {
@@ -123,7 +138,7 @@ const Home = () => {
         )
       );
     } catch (error) {
-      // setLoading(false);
+      setLoading(false);
       // setError("Error fetching products");
       console.log("getAllProducts function error: " + error);
     }
@@ -144,17 +159,21 @@ const Home = () => {
     setChecked(all);
   };
   console.log(checked);
-  const [radio, setRadio] = useState([]);
+  const [radio, setRadio] = useState("");
+  const [minPrice, maxPrice] = radio.split(",").map(Number);
   console.log(radio);
   const filterproduct = async () => {
     try {
-      // setLoading(true);
       const response = await axios.post(`${url}/product/productfilter`, {
         checked,
-        radio: parseInt(radio),
+        radio: [minPrice, maxPrice],
       });
-
-      if (response.data && response.data.products) {
+      if (response.data.products === null) {
+        console.log("No products found");
+        toast.error("No products found");
+        setLoading(false);
+        toast.error("No products found");
+      } else if (response.data && response.data.products) {
         setProduct(
           response.data.products.map((product) => {
             return {
@@ -175,12 +194,14 @@ const Home = () => {
       console.error("Error fetching products:", error);
     }
   };
+
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     if (!radio.length || !checked.length) getAllProducts();
   }, [checked.length, radio.length]);
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
+    // console.log(product)
     if (radio.length || checked.length) filterproduct();
   }, [checked, radio]);
 
@@ -194,56 +215,70 @@ const Home = () => {
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Box>
-              <Typography level="body-lg" fontWeight="thin" sx={{ mt: 2 }}>
-                Filters by Category
-              </Typography>
+              <ListItemButton onClick={handleClick}>
+                <ListItemText primary="Filter By Category" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
               {categories?.map((category) => {
                 // const category = product.category;
                 return (
-                  <Box key={category.id}>
-                    <FormGroup>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            onChange={(e) =>
-                              handlefilter(e.target.checked, category.id)
-                            }
-                          />
-                        }
-                        label={`${category.name}`}
-                      />
-                    </FormGroup>
+                  <Box key={category.id} sx={{ ml: 2 }}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                      <FormGroup>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              onChange={(e) =>
+                                handlefilter(e.target.checked, category.id)
+                              }
+                            />
+                          }
+                          label={`${category.name}`}
+                        />
+                      </FormGroup>
+                    </Collapse>
                   </Box>
                 );
               })}
             </Box>
             <Divider sx={{ my: 2 }} />
             <Box>
-              <Typography level="body-lg" fontWeight="thin" sx={{ mt: 2 }}>
-                Filters by Prices
-              </Typography>
+              <ListItemButton onClick={handleClick2}>
+                <ListItemText primary="Filter By Price" />
+                {openPriceFilter ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
 
               <RadioGroup
                 value={radio}
-                onChange={(e) => setRadio([e.target.value])}
+                onChange={(e) => setRadio(e.target.value)}
                 name="radio-buttons-group"
               >
                 {prices?.map((price) => {
                   return (
-                    <Box key={price._id}>
-                      <FormControlLabel
-                        value={String(price.array)}
-                        control={<Radio />}
-                        label={price.name}
-                      />
+                    <Box key={price._id} sx={{ ml: 2 }}>
+                      <Collapse
+                        in={openPriceFilter}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <FormControlLabel
+                          value={price.array.join(",")}
+                          control={<Radio />}
+                          label={price.name}
+                        />
+                      </Collapse>
                     </Box>
                   );
                 })}
               </RadioGroup>
-
-              
             </Box>
-            <Button variant= "contained" onClick={()=> window.location.reload()} >Reset Filters</Button>
+            <Button
+              sx={{ mt: 2, ml: 2 }}
+              level="contained"
+              onClick={() => window.location.reload()}
+            >
+              Reset Filters
+            </Button>
           </div>
 
           <div className="lg:col-span-9 md:col-span-9    m-2  flex-wrap  col-span-12  pt-2 ">
@@ -251,7 +286,8 @@ const Home = () => {
               All Products
             </Typography>
             <Divider sx={{ my: 2 }} />
-            {loading ? (
+
+            {product.length === 0 ? (
               <Box
                 display="flex"
                 justifyContent="center"
@@ -259,7 +295,7 @@ const Home = () => {
                 minHeight={300}
                 sx={{ marginY: 2 }}
               >
-                <CircularProgress />
+                <Typography level="h4">No products found</Typography>
               </Box>
             ) : (
               <Box
@@ -267,17 +303,17 @@ const Home = () => {
                 sx={{
                   display: "inline-list-item",
                   flexWrap: "wrap",
-                  justifyContent: "space-between",
+                  justifyContent: "start",
                   alignContent: "center",
                 }}
-                gap={4}
+                gap={5}
                 flexWrap="wrap"
               >
                 {product?.slice(start, end)?.map((product) => {
                   return (
                     <Stack
                       direction="row"
-                      justifyContent={"start"}
+                      justifyContent={"flex"}
                       alignItems={"center"}
                       flexWrap="wrap"
                       key={product._id}
@@ -353,7 +389,7 @@ const Home = () => {
               alignItems={"center"}
               sx={{ marginY: 2 }}
             >
-              {loading ? (
+              {product.length === 0 ? (
                 <></>
               ) : (
                 <Pagination
