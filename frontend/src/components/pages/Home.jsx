@@ -16,6 +16,7 @@ import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import CardOverflow from "@mui/joy/CardOverflow";
 import Chip from "@mui/joy/Chip";
+import CircularProgress from "@mui/material/CircularProgress";
 import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 import { prices } from "./price";
@@ -28,17 +29,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import { useSearch } from "../../context/searchRoute";
 import clsx from "clsx";
-import { Modal as BaseModal } from "@mui/base/Modal";
-import { get } from "superagent";
-import ProductModal from "../../utils/productmodal";
 import PropTypes from "prop-types";
-import styled from "styled-components";
-import { css } from "@mui/system";
-
 import Modal from "@mui/material/Modal";
-// import { TextField } from '@mui/material/TextField';
 const Home = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
@@ -105,7 +98,7 @@ const Home = () => {
   const handleOpen = (slug) => {
     console.log(slug);
     setSlug(slug);
-getSingleProduct(slug);
+    getSingleProduct(slug);
   };
 
   const handleChange = (event, value) => {
@@ -151,7 +144,6 @@ getSingleProduct(slug);
     }
   };
   const [singleProduct, setSingleProduct] = useState([]);
-  
 
   const getAllProducts = async () => {
     try {
@@ -277,9 +269,9 @@ getSingleProduct(slug);
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    bgcolor: "background.paper",
+    // bgcolor: "background.paper",
     border: "2px solid #000",
-    boxShadow: 24,
+    // boxShadow: 0,
   };
   const getSingleProduct = async (slug) => {
     setLoading(true);
@@ -301,15 +293,44 @@ getSingleProduct(slug);
           quantity: data.singleProduct.quantity,
           price: data.singleProduct.price,
           slug: data.singleProduct.slug,
+          category: data.singleProduct.category,
         })
       );
     } catch (error) {
       setLoading(false);
-      setError("Error fetching products");
+      // setError("Error fetching products");
       console.log("getSingleProduct function error: " + error);
     }
   };
 
+  const [relatedProducts, SetRelatedProducts] = useState([]);
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${url}/product/similarproduct/${singleProduct.id}/${singleProduct.category._id}`
+        );
+        const data = response.data;
+        SetRelatedProducts(
+          data.similarProducts.map((product) => {
+            return {
+              _id: product._id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              slug: product.slug,
+              category: product.category,
+            };
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
+    };
+    fetchRelatedProducts();
+  }, [singleProduct]);
+  console.log(relatedProducts);
   return (
     <Layout title={open ? "Ecommerce | Product " : "Ecommerce | Home"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -320,22 +341,222 @@ getSingleProduct(slug);
             onClose={handleCloseModal}
             aria-labelledby="child-modal-title"
             aria-describedby="child-modal-description"
+            // sx={{
+            //   backdropFilter: "blur(10px)",
+            //   backgroundColor: "rgba(255, 255, 255, 0.5)",
+            // }}
           >
-            <Box sx={{ ...style, width: "80%", height: "80%" }}>
-             {
-                singleProduct&&(
-
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <Box
+                sx={{
+                  ...style,
+                  width: "80%",
+                  height: "80%",
+                  // backdropFilter: "blur(2px)",
+                  overflow: "auto",
+                  margin: 2,
+                  padding: 4,
+                  borderRadius: 16,
+                  backgroundColor: "rgba(257, 255, 260, 0.9)",
+                }}
+              >
+                {singleProduct && (
                   <div>
-                    <h1>{singleProduct.name}</h1>
-                    <p>{singleProduct.description}</p>
-                    <p>{singleProduct.price}</p>
-                    <p>{singleProduct.quantity}</p>
-                    {/* <img src={`${url}/product/getphotoproduct/${singleProduct.id}`} alt="" height={/> */}
+                    <Typography
+                      level="h2"
+                      fontWeight="thin"
+                      sx={{ mt: 2, ml: 4 }}
+                    >
+                      Product Details
+                    </Typography>
+                    <Stack
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      direction={{ md: "row", xs: "column" }}
+                      flexWrap={"wrap"}
+                    >
+                      <Box
+                        display={{ lg: "flex", md: "flex" }}
+                        justifyContent={{ xs: "center", sm: "center" }}
+                        alignItems={{ xs: "center", sm: "center" }}
+                        flexWrap="wrap"
+                        gap={5}
+                        // overflow="scroll"
+                        // textOverflow={"ellipsis"}
+                        mt="20px"
+                        sx={{
+                          flexDirection: "column",
+                          "@media (min-width: 500px)": {
+                            flexDirection: "row",
+                          },
+                        }}
+                      >
+                        <AspectRatio
+                          sx={{
+                            minWidth: "100%",
+                            maxWidth: "100%",
+                            borderRadius: "30px",
+                            "@media (min-width: 600px)": {
+                              minWidth: "600px",
+                              maxWidth: "600px",
+                            },
+                          }}
+                        >
+                          <img
+                            width="100%"
+                            height="100%"
+                            src={`${url}/product/getphotoproduct/${singleProduct.id}`}
+                            loading="lazy"
+                            alt=""
+                          />
+                        </AspectRatio>
+                        <Stack
+                          sx={{
+                            minWidth: "100%",
+                            maxWidth: "100%",
+                            borderRadius: "30px",
+                          }}
+                          // display="flex"
+                          justifyContent="start"
+                          alignItems={"start"}
+                        >
+                          {/* Product details */}
+
+                          <Typography
+                            level="h2"
+                            fontWeight="thin"
+                            sx={{ mt: 2, ml: 4, textDecoration: "underline" }}
+                          >
+                            {singleProduct.name}
+                          </Typography>
+                          <Typography
+                            level="body1"
+                            fontWeight="thin"
+                            sx={{ mt: 2, ml: 4 }}
+                          >
+                            {singleProduct.description}
+                          </Typography>
+                          <Typography
+                            level="body1"
+                            fontWeight="bold"
+                            sx={{ mt: 2, ml: 4 }}
+                          >
+                            Price: {singleProduct.price}PKR
+                          </Typography>
+                          <Button variant="solid" sx={{ mt: 2, ml: 4 }}>
+                            Add to Cart
+                          </Button>
+                        </Stack>
+                      </Box>
+                      {/* </Box> */}
+                      <Box gap={5}>
+                        <Typography
+                          level="h2"
+                          fontWeight="thin"
+                          sx={{ mt: 2, ml: 4 }}
+                        >
+                          Related Products
+                        </Typography>
+                        {relatedProducts.length === 0 ? (
+                          <Typography
+                            level="body1"
+                            fontWeight="thin"
+                            sx={{ mt: 2, ml: 4 }}
+                          >
+                            No products found.
+                          </Typography>
+                        ) : (
+                          relatedProducts?.map((product) => {
+                            return (
+                              <Stack
+                                direction="column"
+                                justifyContent={"center"}
+                                alignItems={"center"}
+                                flexWrap="wrap"
+                                key={product._id}
+                                gap={5}
+                                sx={{ margin: 2 }}
+                                onClick={() => {
+                                  handleOpen(product.slug);
+                                }}
+                              >
+                                <Card
+                                  sx={{
+                                    minWidth: 220,
+                                    maxWidth: 220,
+                                    boxShadow: "lg",
+                                  }}
+                                  onClick={() => {
+                                    handleOpen(product.slug);
+                                  }}
+                                >
+                                  <CardOverflow>
+                                    <AspectRatio sx={{ minWidth: 220 }}>
+                                      <img
+                                        src={`${url}/product/getphotoproduct/${product._id}`}
+                                        loading="lazy"
+                                        alt=""
+                                      />
+                                    </AspectRatio>
+                                  </CardOverflow>
+                                  <CardContent onClick={handleOpenModal}>
+                                    <Typography level="body-xs">
+                                      {product.category.name}
+                                    </Typography>
+                                    <Link
+                                      href="#product-card"
+                                      fontWeight="md"
+                                      color="neutral"
+                                      textColor="text.primary"
+                                      overlay
+                                      // endDecorator={<ArrowOutwardIcon />}
+                                    >
+                                      {product.name}
+                                    </Link>
+
+                                    <Typography
+                                      level="title-lg"
+                                      sx={{ mt: 1, fontWeight: "xl" }}
+                                      endDecorator={
+                                        <Chip
+                                          component="span"
+                                          size="sm"
+                                          variant="soft"
+                                          color="success"
+                                        >
+                                          Lowest price
+                                        </Chip>
+                                      }
+                                    >
+                                      {product.price} PKR
+                                    </Typography>
+                                    <Typography level="body-sm">
+                                      (Only <b>7</b> left in stock!)
+                                    </Typography>
+                                  </CardContent>
+
+                                  <CardOverflow>
+                                    <Button
+                                      variant="solid"
+                                      sx={{ backgroundColor: "#1D1F1D" }}
+                                      size="lg"
+                                    >
+                                      Add to cart
+                                    </Button>
+                                  </CardOverflow>
+                                </Card>
+                              </Stack>
+                            );
+                          })
+                        )}
+                      </Box>
+                    </Stack>
                   </div>
-                )
-             }
-              
-            </Box>
+                )}
+              </Box>
+            )}
           </Modal>
         </div>
         <div className="row grid grid-cols-12 row-span-auto  ">

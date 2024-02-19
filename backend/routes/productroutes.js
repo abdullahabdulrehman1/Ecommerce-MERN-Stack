@@ -11,6 +11,7 @@ import {
   deleteProductController,
   productFilterController,
   productSearchController,
+  getSimilarProductController
 } from "../controller/productController.js";
 
 const router = express.Router();
@@ -40,7 +41,7 @@ router.delete(
   requireSignin,
   isAdmin,
   deleteProductController
-);
+);  
 router.put(
   "/updateproduct/:pid",
   requireSignin,
@@ -50,5 +51,7 @@ router.put(
 );
 router.post("/productfilter", productFilterController);
 router.get("/productsearch/:query", productSearchController);
+//similar product
+router.get("/similarproduct/:pid/:cid", getSimilarProductController);
 
 export default router;

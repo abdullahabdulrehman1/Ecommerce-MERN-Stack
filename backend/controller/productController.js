@@ -277,6 +277,25 @@ export const productSearchController = async (req, res) => {
         .json({ success: true, message: "No products found", products: []});
     }
     res.status(200).json({ success: true, products });
+    
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getSimilarProductController = async (req, res) => {
+  try {
+    const { pid, cid } = req.params;
+    const similarProducts = await productmodel.find({
+      _id: { $ne: pid },
+      category: cid,
+    }).limit(3).populate("category").select("-photo");
+    if (!similarProducts) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No similar products found", similarProducts: [] });
+    }
+    res.status(200).json({ success: true, similarProducts });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -291,5 +310,6 @@ export default {
   getSingleProductController,
   productPhotoController,
   productFilterController,
-  productSearchController
+  productSearchController,
+  getSimilarProductController
 };

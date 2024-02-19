@@ -8,7 +8,7 @@ function Footer() {
       className={`container rounded-lg mx-auto bg-gray-800 my-2 py-5 text-white mt-5`}
     >
       <h1 className="text-center h-10">
-        All Right Reserved 2023 © Abdullah Abdul Rehman
+        All Right Reserved 2024 © Abdullah Abdul Rehman
       </h1>
       <p className="text-center mt-4">
         <Link to={"/about"} className="mr-3">
