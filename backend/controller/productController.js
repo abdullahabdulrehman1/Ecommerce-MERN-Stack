@@ -225,33 +225,30 @@ export const updateProductController = async (req, res) => {
 export const productFilterController = async (req, res) => {
   try {
     let { checked, radio } = req.body;
-console.log("radio:", radio);
-console.log("checked:", checked);
-let args = {};
-if (checked.length > 0) {
-  args.category = checked;
-}
+    console.log("radio:", radio);
+    console.log("checked:", checked);
+    let args = {};
+    if (checked.length > 0) {
+      args.category = checked;
+    }
 
-if (radio) {
-  // radio = radio[0].split(',').map(Number); // convert radio to an array of numbers
-  args.price = {
-    $gte: radio[0],
-    $lte: radio[1],
-  };
-}
+    if (radio && radio.length > 0) {
+      args.price = {
+        $gte: radio[0] || 0,
+        $lte: radio[1] || 1000000,
+      };
+    }
 
-console.log("args:", args);
+    console.log("args:", args);
 
-const products = await productmodel
-  .find(args)
-  .populate("category")
-  .select("-photo")
-  .sort({ createdAt: -1 });
-console.log("products:", products);
+    const products = await productmodel
+      .find(args)
+      .populate("category")
+      .select("-photo")
+      .sort({ createdAt: -1 });
+    console.log("products:", products);
 
-
-  res.status(200).json({ success: true, products: products });
-
+    res.status(200).json({ success: true, products: products });
   } catch (err) {
     console.log("error:", err);
     res.status(500).json({ success: false, message: err.message });
@@ -265,19 +262,21 @@ export const productSearchController = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Please provide a search query" });
     }
-    const products = await productmodel.find({
-      $or: [
-        { name: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-      ],
-    }).select("-photo").populate("category");
+    const products = await productmodel
+      .find({
+        $or: [
+          { name: { $regex: query, $options: "i" } },
+          { description: { $regex: query, $options: "i" } },
+        ],
+      })
+      .select("-photo")
+      .populate("category");
     if (!products) {
       return res
         .status(200)
-        .json({ success: true, message: "No products found", products: []});
+        .json({ success: true, message: "No products found", products: [] });
     }
     res.status(200).json({ success: true, products });
-    
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -286,21 +285,26 @@ export const productSearchController = async (req, res) => {
 export const getSimilarProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
-    const similarProducts = await productmodel.find({
-      _id: { $ne: pid },
-      category: cid,
-    }).limit(3).populate("category").select("-photo");
+    const similarProducts = await productmodel
+      .find({
+        _id: { $ne: pid },
+        category: cid,
+      })
+      .limit(3)
+      .populate("category")
+      .select("-photo");
     if (!similarProducts) {
-      return res
-        .status(200)
-        .json({ success: true, message: "No similar products found", similarProducts: [] });
+      return res.status(200).json({
+        success: true,
+        message: "No similar products found",
+        similarProducts: [],
+      });
     }
     res.status(200).json({ success: true, similarProducts });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 
 export default {
   createProductController,
@@ -311,5 +315,5 @@ export default {
   productPhotoController,
   productFilterController,
   productSearchController,
-  getSimilarProductController
+  getSimilarProductController,
 };
