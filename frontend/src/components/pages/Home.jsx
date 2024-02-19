@@ -227,7 +227,7 @@ const Home = () => {
 
   useEffect(() => {
     // setLoading(true);
-    if (!radio.length || !checked.length) getAllProducts();
+    if (!radio.length && !checked.length) getAllProducts();
   }, [checked.length, radio.length]);
   useEffect(() => {
     // setLoading(true);
@@ -681,7 +681,7 @@ const Home = () => {
                     <Typography level="h4">No products found</Typography>
                   </Stack>
                 ) : (
-                  (products.length === 0 ? product : products)
+                  (products.length !== 0 ? products : product)
                     ?.slice(start, end)
                     ?.map((product) => {
                       return (
@@ -772,7 +772,7 @@ const Home = () => {
               alignItems={"center"}
               sx={{ marginY: 2 }}
             >
-              {product.length === 0 || products.length === 0 || search ? (
+              {product.length === 0 && products.length === 0 && search ? (
                 <></>
               ) : (
                 <Pagination
