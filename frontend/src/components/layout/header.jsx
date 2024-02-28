@@ -9,10 +9,12 @@ import { toast } from "react-toastify";
 import AdminRoute from "../routes/adminroute";
 import UserRoute from "../routes/userroute";
 import { useAuth } from "../../context/authRoute";
-
+import { useCartContext } from "../../context/cartContex";
+import { Link } from "react-router-dom";
 const Header = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { cart, setCart } = useCartContext();
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
@@ -27,20 +29,20 @@ const Header = () => {
     }
   }, [setisloggedin]);
   const handlelogout = () => {
-    // localStorage.removeItem("user");
     localStorage.removeItem("token");
 
     toast.error("Logout Successfully");
   };
+
   return (
     <div>
       <nav className="container mx-auto rounded-lg my-5 bg-white border border-gray-600 ">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <a href="#" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap">
               Ecommerce Store
             </span>
-          </a>
+          </Link>
           <button
             data-collapse-toggle="navbar-default"
             type="button"
@@ -74,53 +76,56 @@ const Header = () => {
           >
             <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white ">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
                   aria-current="page"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                {/* console.log(user.role) */}
-                <a
-                  //  href = {}
-                  href={`/dashboard/${
+                <Link
+                  to={`/dashboard/${
                     Number(authuser.role) == 1 ? "admin" : "user"
                   }`}
                   className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0    "
                 >
                   Dashboard
-                </a>
+                </Link>
               </li>
-              <li className="flex">
-                <a
-                  href="#"
-                  className="flex py-0 pl-3 pr-4  text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
+              <li className="">
+                <Link
+                  to="/cart"
+                  className="flex flex-wrap align-center py-0 pl-3 pr-4 relative   text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                 >
-                  <span className="mt-1 mr-2">
-                    {" "}
-                    <MdShoppingCart />{" "}
+                  <span className="mr-1 "> Cart</span>
+                  <span className=" mr-2  mt-1">
+                    <MdShoppingCart />
                   </span>
-                  Cart
-                </a>
+                  {cart ? (
+                    <span className="absolute right-0 top-0 md:translate-x-3 sm:translate-x-0  rounded-full bg-red-600 w-5 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+                      {cart.length || cart.length >= 9 ? "9+" : cart.length}
+                    </span>
+                  ) : (
+                    <></>
+                  )}
+                </Link>
               </li>
-              {/* {console.log(isloggedin)} */}
               {!isloggedin ? (
                 <>
                   {" "}
                   <li>
-                    <a
-                      href="/register"
+                    <Link
+                      to="/register"
                       className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                     >
                       Register
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="/login"
+                    <Link
+                      to="/login"
                       className="flex py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                     >
                       <span className="mt-1 mr-2">
@@ -128,14 +133,14 @@ const Header = () => {
                         <AiOutlineLogin />{" "}
                       </span>
                       Login
-                    </a>
+                    </Link>
                   </li>
                 </>
               ) : (
                 <>
                   <li onClick={handlelogout}>
-                    <a
-                      href="/"
+                    <Link
+                      to="/"
                       className="flex py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
                     >
                       <span className="mt-1 mr-2">
@@ -143,7 +148,7 @@ const Header = () => {
                         <AiOutlineLogin />{" "}
                       </span>
                       Logout
-                    </a>
+                    </Link>
                   </li>
                 </>
               )}

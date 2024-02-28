@@ -306,6 +306,23 @@ export const getSimilarProductController = async (req, res) => {
   }
 };
 
+export const fetchProductsCart = async (req,res) => {
+  try {
+    const {productIds} = req.body;
+    // Convert productIds to an array if it's not
+    const productIdsArray = Array.isArray(productIds) ? productIds : [productIds];
+    const products = await productmodel.find({
+      _id: { $in: productIdsArray }
+    }).select("-photo");
+    if(!products || products.length === 0) {
+      return res.status(200).json({success:false,message:"Product not found"});
+    }
+    res.status(200).json({success:true,products});
+  } 
+  catch(err) {
+    res.status(500).json({success:false,message:err.message});
+  }
+};
 export default {
   createProductController,
   updateProductController,
@@ -316,4 +333,5 @@ export default {
   productFilterController,
   productSearchController,
   getSimilarProductController,
+  fetchProductsCart,
 };

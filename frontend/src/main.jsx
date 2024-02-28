@@ -4,13 +4,14 @@ import App from "./App.jsx";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./context/authRoute.jsx";
-import { SearchProvider } from "./context/searchRoute.jsx";
+// import { SearchProvider } from "./context/searchRoute.jsx";
+import { CreateCartContext } from "./context/cartContex.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <SearchProvider>
+    <CreateCartContext>
       <ToastContainer />
       <App />
-    </SearchProvider>
+    </CreateCartContext>
   </AuthProvider>
 );

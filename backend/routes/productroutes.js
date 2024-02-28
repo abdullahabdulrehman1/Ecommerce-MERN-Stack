@@ -11,7 +11,8 @@ import {
   deleteProductController,
   productFilterController,
   productSearchController,
-  getSimilarProductController
+  getSimilarProductController,
+  fetchProductsCart
 } from "../controller/productController.js";
 
 const router = express.Router();
@@ -51,6 +52,7 @@ router.put(
 );
 router.post("/productfilter", productFilterController);
 router.get("/productsearch/:query", productSearchController);
+router.post("/fetchproductcart", fetchProductsCart);
 //similar product
 router.get("/similarproduct/:pid/:cid", getSimilarProductController);
 

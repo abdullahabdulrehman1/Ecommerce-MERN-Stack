@@ -1,6 +1,5 @@
 import categorymodel from "../models/categorymodel.js";
 import slugify from "slugify";
-// import mongoose from "mongoose";
 export const createCategoryController = async (req, res) => {
   try {
     const { name } = req.body;

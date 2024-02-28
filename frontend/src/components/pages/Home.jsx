@@ -32,6 +32,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import Modal from "@mui/material/Modal";
+import { useCartContext } from "../../context/cartContex.jsx";
 const Home = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
@@ -47,6 +48,7 @@ const Home = () => {
   const start = (page - 1) * itemperpage;
   const [slug, setSlug] = useState("");
   const end = start + itemperpage;
+  const { cart, setCart, addToCart } = useCartContext();
   const Backdrop = React.forwardRef((props, ref) => {
     const { open, className, ...other } = props;
     return (
@@ -57,7 +59,7 @@ const Home = () => {
       />
     );
   });
-
+  // console.log(addCart);
   Backdrop.propTypes = {
     className: PropTypes.string.isRequired,
     open: PropTypes.bool,
@@ -101,6 +103,10 @@ const Home = () => {
     getSingleProduct(slug);
   };
 
+  const handlecart = (id) => {
+    // console.log(id);
+    () => setCart([...p, id]);
+  };
   const handleChange = (event, value) => {
     setPage(value);
   };
@@ -188,7 +194,7 @@ const Home = () => {
     }
     setChecked(all);
   };
-  console.log(checked);
+  // console.log(checked);
   const [radio, setRadio] = useState("");
   const [minPrice, maxPrice] = radio.split(",").map(Number);
   console.log(radio);
@@ -285,7 +291,6 @@ const Home = () => {
       const data = response.data;
       return (
         setLoading(false),
-        console.log(data),
         setSingleProduct({
           id: data.singleProduct._id,
           name: data.singleProduct.name,
@@ -330,7 +335,9 @@ const Home = () => {
     };
     fetchRelatedProducts();
   }, [singleProduct]);
-  console.log(relatedProducts);
+  
+  // console.log(addCart);
+  // console.log(relatedProducts);
   return (
     <Layout title={open ? "Ecommerce | Product " : "Ecommerce | Home"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -511,7 +518,6 @@ const Home = () => {
                                       color="neutral"
                                       textColor="text.primary"
                                       overlay
-                                      // endDecorator={<ArrowOutwardIcon />}
                                     >
                                       {product.name}
                                     </Link>
@@ -750,7 +756,12 @@ const Home = () => {
                               </Typography>
                             </CardContent>
 
-                            <CardOverflow>
+                            <CardOverflow
+                              onClick={() => {
+                                addToCart(product._id);
+                                // console.log(cart);
+                              }}
+                            >
                               <Button
                                 variant="solid"
                                 sx={{ backgroundColor: "#1D1F1D" }}

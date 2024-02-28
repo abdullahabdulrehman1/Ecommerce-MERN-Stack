@@ -25,6 +25,7 @@ import User from "./components/pages/admin/user";
 import Order from "./components/pages/user/order";
 import UserProfile from "./components/pages/user/profile";
 import AllProducts from "./components/pages/admin/allproducts";
+import Cart from "./components/pages/cart";
 // import { useAuth } from "./context/authRoute.jsx";
 // import Admin from "./components/routes/adminroute";
 const App = () => {
@@ -37,6 +38,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
+        <Route path="/cart" element={<Cart />} />
+        
         <Route path={`/dashboard/`} element={<UserRoute />}>
           <Route path="user" element={<UserDashboard />} />
           <Route path="user/orders" element={<Order />} />
