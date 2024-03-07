@@ -6,7 +6,7 @@ function Footer() {
   return (
     <footer
       className={`container rounded-lg mx-auto  bg-gray-800 my-2 py-5 text-white mt-5`}
-    >
+    > 
       <h1 className="text-center h-10 ">
         All Right Reserved 2024 © Abdullah Abdul Rehman
       </h1>

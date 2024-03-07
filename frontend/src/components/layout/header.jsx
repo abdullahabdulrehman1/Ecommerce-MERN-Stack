@@ -104,8 +104,8 @@ const Header = () => {
                     <MdShoppingCart />
                   </span>
                   {cart ? (
-                    <span className="absolute right-0 top-0 md:translate-x-3 sm:translate-x-0  rounded-full bg-red-600 w-5 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
-                      {cart.length || cart.length >= 9 ? "9+" : cart.length}
+                    <span className="absolute right-0 top-0 md:translate-x-5 sm:translate-x-0  rounded-full bg-red-600 w-7 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+                      {cart.length && cart.length >= 99 ? "99+" : cart.length}
                     </span>
                   ) : (
                     <></>

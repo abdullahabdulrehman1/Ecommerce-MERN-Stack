@@ -103,18 +103,13 @@ const Home = () => {
     getSingleProduct(slug);
   };
 
-  const handlecart = (id) => {
-    // console.log(id);
-    () => setCart([...p, id]);
-  };
+
   const handleChange = (event, value) => {
     setPage(value);
   };
   const [openCategory, setOpenCategory] = React.useState(true);
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
+
   const [openPriceFilter, setOpenPriceFilter] = React.useState(true);
 
   const handleClick2 = () => {
@@ -335,7 +330,7 @@ const Home = () => {
     };
     fetchRelatedProducts();
   }, [singleProduct]);
-  
+
   // console.log(addCart);
   // console.log(relatedProducts);
   return (
@@ -452,7 +447,16 @@ const Home = () => {
                           >
                             Price: {singleProduct.price}PKR
                           </Typography>
-                          <Button variant="solid" sx={{ mt: 2, ml: 4 }}>
+                          <Button
+                            variant="solid"
+                            sx={{ mt: 2, ml: 4 }}
+                            onClick={() => {
+                              addToCart(product._id);
+                              // console.log(cart);
+                              localStorage.setItem("cart", JSON.stringify([...cart, product._id]));
+
+                            }}
+                          >
                             Add to Cart
                           </Button>
                         </Stack>
@@ -548,6 +552,10 @@ const Home = () => {
                                       variant="solid"
                                       sx={{ backgroundColor: "#1D1F1D" }}
                                       size="lg"
+                                      onClick={() => {
+                                        addToCart(product._id);
+                                        // console.log(cart);
+                                      }}
                                     >
                                       Add to cart
                                     </Button>
@@ -759,6 +767,7 @@ const Home = () => {
                             <CardOverflow
                               onClick={() => {
                                 addToCart(product._id);
+                                localStorage.setItem("cart", JSON.stringify([...cart, product._id]));
                                 // console.log(cart);
                               }}
                             >

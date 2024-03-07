@@ -5,42 +5,50 @@ import axios from "axios";
 import { useCartContext } from "../../context/cartContex";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { CloseRounded } from "@mui/icons-material";
+import { Typography, Button } from "@mui/material";
 const Cart = () => {
   const { cart, addToCart, deleteFromCart } = useCartContext();
   useEffect(() => {
     console.log(cart);
-  }, [cart]);
+    cart;
+  }, []);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.post(`${url}/product/fetchproductcart`, {
+        productIds: cart,
+      });
+      const data = response.data;
+      if (data && data.products) {
+        setProductss(
+          data.products.map((product) => {
+            return {
+              _id: product._id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              slug: product.slug,
+              category: product.category,
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [productss, setProductss] = useState([]);
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.post(`${url}/product/fetchproductcart`, {
-          productIds: cart,
-        });
-        const data = response.data;
-        if (data && data.products) {
-          setProductss(
-            data.products.map((product) => {
-              return {
-                _id: product._id,
-                name: product.name,
-                description: product.description,
-                quantity: product.quantity,
-                price: product.price,
-                slug: product.slug,
-                category: product.category,
-              };
-            })
-          );
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchProducts();
   }, [cart]);
-  console.log(productss);
+  // console.log(productss);
+
+  const totalPrice = productss.reduce(
+    (total, product) => total + product.price,
+    0
+  );
   return (
     <Layout title={"Ecommerce | Cart"} className="overflow-hidden">
       <div className=" mx-auto my-4 container">
@@ -54,7 +62,9 @@ const Cart = () => {
                 <div className="flow-root">
                   <ul className="-my-8">
                     {productss.length === 0 ? (
-                      <></>
+                      <Typography variant="h6" textAlign={"center"}>
+                        No Product in Cart
+                      </Typography>
                     ) : (
                       productss.map((product) => {
                         return (
@@ -63,9 +73,9 @@ const Cart = () => {
                             key={product._id}
                           >
                             <div className="shrink-0 relative">
-                              <span className="absolute top-1 left-1 flex h-6 w-6 items-center justify-center rounded-full border bg-white text-sm font-medium text-gray-500 shadow sm:-top-2 sm:-right-2">
-                                {/* {product.quantity} */}
-                              </span>
+                              {/* <span className="absolute top-1 left-1 flex h-6 w-6 items-center justify-center rounded-full border bg-white text-sm font-medium text-gray-500 shadow sm:-top-2 sm:-right-2"> */}
+                              {/* {product.quantity} */}
+                              {/* </span> */}
                               <img
                                 className="h-24 w-24 max-w-full rounded-lg object-cover"
                                 src={`${url}/product/getphotoproduct/${product._id}`}
@@ -89,30 +99,22 @@ const Cart = () => {
                                   </p>
                                 </div>
                               </div>
-                              <div className="absolute top-0 right-0 flex sm:bottom-0 sm:top-auto">
+                              <div className="absolute top-0 right-0  flex sm:bottom-0 sm:top-auto">
                                 <button
                                   type="button"
-                                  className="flex rounded p-2 text-center text-gray-500 transition-all duration-200 ease-in-out focus:shadow hover:text-gray-900"
+                                  className="flex rounded p-0 text-center text-gray-500 transition-all duration-200 ease-in-out focus:shadow hover:text-gray-900"
+                                  onClick={() => {
+                                    deleteFromCart(product._id);
+                                    // console.log('clicked')
+                                  }}
                                 >
-                                  <svg
-                                    className="h-5 w-5"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    onClick={() => {
-                                      deleteFromCart(product._id);
-                                    }}
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M6 18L18 6M6 6l12 12"
-                                      className=""
-                                    />
-                                  </svg>
+                                  <CloseRounded />
                                 </button>
+                                {/* <Button variant="outlined" onClick={deleteFromCart(product._id)}
+                                
+                                >
+                                  <CloseRounded />
+                                </Button> */}
                               </div>
                             </div>
                           </li>
@@ -125,27 +127,34 @@ const Cart = () => {
                   <div className="flex items-center justify-between">
                     <p className="text-gray-400">Subtotal</p>
                     <p className="text-lg font-semibold text-gray-900">
-                      $2399.00
+                      PKR {totalPrice}
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-gray-400">Shipping</p>
-                    <p className="text-lg font-semibold text-gray-900">$8.00</p>
+                    <p className="text-lg font-semibold text-gray-900">PKR 0</p>
                   </div>
                 </div>
                 <div className="mt-6 flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Total</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     <span className="text-xs font-normal text-gray-400">
-                      USD
+                      PKR
                     </span>{" "}
-                    2499.00
+                    {totalPrice}
                   </p>
                 </div>
                 <div className="mt-6 text-center">
                   <button
                     type="button"
                     className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                    onClick={() => {
+                      if (cart.length === 0) {
+                        toast.error("Cart is empty");
+                      } else {
+                        toast.success("Order Placed");
+                      }
+                    }}
                   >
                     Place Order
                     <svg
