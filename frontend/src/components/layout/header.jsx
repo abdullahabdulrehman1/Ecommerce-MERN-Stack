@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdShoppingCart } from "react-icons/md";
-// import {AiOutlineLogin} from 'react-icons/md'
 import { AiOutlineLogin } from "react-icons/ai";
-// import { useAuth } from "../../context/authRoute";
 import { toast } from "react-toastify";
-// import useState from "react";
-// import { useDispatchContext, useStateContext } from "../../context/authRoute";
-import AdminRoute from "../routes/adminroute";
-import UserRoute from "../routes/userroute";
 import { useAuth } from "../../context/authRoute";
-import { useCartContext } from "../../context/cartContex";
 import { Link } from "react-router-dom";
+import { CartContext } from "../../context/cartContex";
 const Header = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const { cart, setCart } = useCartContext();
+  const { cartItems } = useContext(CartContext);
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
@@ -103,9 +97,11 @@ const Header = () => {
                   <span className=" mr-2  mt-1">
                     <MdShoppingCart />
                   </span>
-                  {cart ? (
+                  {cartItems ? (
                     <span className="absolute right-0 top-0 md:translate-x-5 sm:translate-x-0  rounded-full bg-red-600 w-7 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
-                      {cart.length && cart.length >= 99 ? "99+" : cart.length}
+                      {cartItems.length && cartItems.length >= 99
+                        ? "99+"
+                        : cartItems.length}
                     </span>
                   ) : (
                     <></>
@@ -138,7 +134,12 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <li onClick={handlelogout}>
+                  <li
+                    onClick={() => {
+                      handlelogout();
+                      window.location.reload();
+                    }}
+                  >
                     <Link
                       to="/"
                       className="flex py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"

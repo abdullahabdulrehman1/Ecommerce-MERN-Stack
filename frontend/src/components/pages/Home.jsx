@@ -31,11 +31,17 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { CartContext } from "../../context/cartContex";
+import { useContext } from "react";
 import Modal from "@mui/material/Modal";
-import { useCartContext } from "../../context/cartContex.jsx";
-const Home = () => {
+import { motion, AnimatePresence } from "framer-motion";
+// import { useCartContext } from "../../context/cartContex.jsx";
+
+export const Home = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
+  const [popLayout, setPopLayout] = useState(false);
+
   const handleCloseModal = () => setOpen(false);
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const token = localStorage.getItem("token");
@@ -48,7 +54,13 @@ const Home = () => {
   const start = (page - 1) * itemperpage;
   const [slug, setSlug] = useState("");
   const end = start + itemperpage;
-  const { cart, setCart, addToCart } = useCartContext();
+  const { cartItems, addToCart } = useContext(CartContext);
+
+  // const { cart, setCart, addToCart } = useCartContext();
+  const variants = {
+    initial: { perspective: 0 },
+    animate: { perspective: 1000 },
+  };
   const Backdrop = React.forwardRef((props, ref) => {
     const { open, className, ...other } = props;
     return (
@@ -63,6 +75,10 @@ const Home = () => {
   Backdrop.propTypes = {
     className: PropTypes.string.isRequired,
     open: PropTypes.bool,
+  };
+  const handleRemoveFromCart = (product) => {
+    removeFromCart(product);
+    toast.success(`${product.name} removed from cart!`);
   };
 
   const AuthCheck = async () => {
@@ -103,12 +119,10 @@ const Home = () => {
     getSingleProduct(slug);
   };
 
-
   const handleChange = (event, value) => {
     setPage(value);
   };
   const [openCategory, setOpenCategory] = React.useState(true);
-
 
   const [openPriceFilter, setOpenPriceFilter] = React.useState(true);
 
@@ -160,8 +174,9 @@ const Home = () => {
               _id: product._id,
               name: product.name,
               description: product.description,
-              quantity: product.quantity,
+              availablequantity: product.quantity,
               price: product.price,
+              salequantity: product.salequantity,
               slug: product.slug,
               category: product.category,
             };
@@ -211,9 +226,10 @@ const Home = () => {
               _id: product._id,
               name: product.name,
               description: product.description,
-              quantity: product.quantity,
+              availablequantity: product.quantity,
               price: product.price,
               slug: product.slug,
+              salequantity: product.salequantity,
               category: product.category,
             };
           })
@@ -250,9 +266,10 @@ const Home = () => {
               _id: product._id,
               name: product.name,
               description: product.description,
-              quantity: product.quantity,
+              availablequantity: product.quantity,
               price: product.price,
               slug: product.slug,
+              salequantity: product.salequantity,
               category: product.category,
             };
           })
@@ -287,11 +304,12 @@ const Home = () => {
       return (
         setLoading(false),
         setSingleProduct({
-          id: data.singleProduct._id,
+          _id: data.singleProduct._id,
           name: data.singleProduct.name,
           description: data.singleProduct.description,
-          quantity: data.singleProduct.quantity,
+          availablequantity: data.singleProduct.quantity,
           price: data.singleProduct.price,
+          salequantity: data.singleProduct.salequantity,
           slug: data.singleProduct.slug,
           category: data.singleProduct.category,
         })
@@ -307,8 +325,9 @@ const Home = () => {
   useEffect(() => {
     const fetchRelatedProducts = async () => {
       try {
+        if (singleProduct && singleProduct.category) {
         const response = await axios.get(
-          `${url}/product/similarproduct/${singleProduct.id}/${singleProduct.category._id}`
+          `${url}/product/similarproduct/${singleProduct._id}/${singleProduct.category._id}`
         );
         const data = response.data;
         SetRelatedProducts(
@@ -317,13 +336,18 @@ const Home = () => {
               _id: product._id,
               name: product.name,
               description: product.description,
-              quantity: product.quantity,
+              availablequantity: product.quantity,
               price: product.price,
               slug: product.slug,
+              salequantity: product.salequantity,
               category: product.category,
             };
           })
-        );
+        );}
+        else {
+          SetRelatedProducts([]);
+        }
+
       } catch (error) {
         console.error("Error fetching related products:", error);
       }
@@ -385,8 +409,6 @@ const Home = () => {
                         alignItems={{ xs: "center", sm: "center" }}
                         flexWrap="wrap"
                         gap={5}
-                        // overflow="scroll"
-                        // textOverflow={"ellipsis"}
                         mt="20px"
                         sx={{
                           flexDirection: "column",
@@ -409,7 +431,7 @@ const Home = () => {
                           <img
                             width="100%"
                             height="100%"
-                            src={`${url}/product/getphotoproduct/${singleProduct.id}`}
+                            src={`${url}/product/getphotoproduct/${singleProduct._id}`}
                             loading="lazy"
                             alt=""
                           />
@@ -447,14 +469,12 @@ const Home = () => {
                           >
                             Price: {singleProduct.price}PKR
                           </Typography>
+                          {/* {  !cartItems.find(item => item.id === product.id) ? ():} */}
                           <Button
                             variant="solid"
                             sx={{ mt: 2, ml: 4 }}
                             onClick={() => {
-                              addToCart(product._id);
-                              // console.log(cart);
-                              localStorage.setItem("cart", JSON.stringify([...cart, product._id]));
-
+                              addToCart(singleProduct);
                             }}
                           >
                             Add to Cart
@@ -543,19 +563,27 @@ const Home = () => {
                                       {product.price} PKR
                                     </Typography>
                                     <Typography level="body-sm">
-                                      (Only <b>7</b> left in stock!)
+                                      (
+                                      <b>
+                                        {product.availablequantity > 1000
+                                          ? `${(
+                                              product.availablequantity / 1000
+                                            ).toFixed(0)}k`
+                                          : product.availablequantity}
+                                      </b>{" "}
+                                      left in stock!)
                                     </Typography>
                                   </CardContent>
 
-                                  <CardOverflow>
+                                  <CardOverflow
+                                    onClick={() => {
+                                      addToCart(product);
+                                    }}
+                                  >
                                     <Button
                                       variant="solid"
                                       sx={{ backgroundColor: "#1D1F1D" }}
                                       size="lg"
-                                      onClick={() => {
-                                        addToCart(product._id);
-                                        // console.log(cart);
-                                      }}
                                     >
                                       Add to cart
                                     </Button>
@@ -679,10 +707,10 @@ const Home = () => {
                   justifyContent: "start",
                   alignContent: "center",
                 }}
+                flexGrow={1}
                 gap={5}
                 flexWrap="wrap"
               >
-                {/* {(<></>)} */}
                 {products.length === 0 && search ? (
                   <Stack
                     // display="flex"
@@ -695,94 +723,115 @@ const Home = () => {
                     <Typography level="h4">No products found</Typography>
                   </Stack>
                 ) : (
-                  (products.length !== 0 ? products : product)
-                    ?.slice(start, end)
-                    ?.map((product) => {
-                      return (
-                        <Stack
-                          direction="row"
-                          justifyContent={"flex"}
-                          alignItems={"center"}
-                          flexWrap="wrap"
-                          key={product._id}
-                          onClick={() => {
-                            handleOpen(product.slug);
-                          }}
-                        >
-                          <Card
-                            sx={{
-                              minWidth: 220,
-                              maxWidth: 220,
-                              boxShadow: "lg",
+                  <AnimatePresence mode={popLayout ? "popLayout" : "sync"}>
+                    {(products.length !== 0 ? products : product)
+                      ?.slice(start, end)
+                      ?.map((product) => {
+                        return (
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            // transition={{ duration: 0.5 }}
+                            layout
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{
+                              scale: 1,
+                              opacity: 1,
+                            
                             }}
-                            onClick={() => {
-                              handleOpen(product.slug);
-                            }}
+                            variants={variants}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ type: "spring" }}
+                            key={product._id}
                           >
-                            <CardOverflow>
-                              <AspectRatio sx={{ minWidth: 220 }}>
-                                <img
-                                  src={`${url}/product/getphotoproduct/${product._id}`}
-                                  loading="lazy"
-                                  alt=""
-                                />
-                              </AspectRatio>
-                            </CardOverflow>
-                            <CardContent onClick={handleOpenModal}>
-                              <Typography level="body-xs">
-                                {product.category.name}
-                              </Typography>
-                              <Link
-                                href="#product-card"
-                                fontWeight="md"
-                                color="neutral"
-                                textColor="text.primary"
-                                overlay
-                                // endDecorator={<ArrowOutwardIcon />}
-                              >
-                                {product.name}
-                              </Link>
-
-                              <Typography
-                                level="title-lg"
-                                sx={{ mt: 1, fontWeight: "xl" }}
-                                endDecorator={
-                                  <Chip
-                                    component="span"
-                                    size="sm"
-                                    variant="soft"
-                                    color="success"
-                                  >
-                                    Lowest price
-                                  </Chip>
-                                }
-                              >
-                                {product.price} PKR
-                              </Typography>
-                              <Typography level="body-sm">
-                                (Only <b>7</b> left in stock!)
-                              </Typography>
-                            </CardContent>
-
-                            <CardOverflow
+                            <Stack
+                              direction="row"
+                              justifyContent={"flex"}
+                              alignItems={"center"}
+                              flexWrap="wrap"
                               onClick={() => {
-                                addToCart(product._id);
-                                localStorage.setItem("cart", JSON.stringify([...cart, product._id]));
-                                // console.log(cart);
+                                handleOpen(product.slug);
                               }}
                             >
-                              <Button
-                                variant="solid"
-                                sx={{ backgroundColor: "#1D1F1D" }}
-                                size="lg"
+                              <Card
+                                sx={{
+                                  minWidth: 220,
+                                  maxWidth: 220,
+                                  boxShadow: "lg",
+                                }}
+                                onClick={() => {
+                                  handleOpen(product.slug);
+                                }}
                               >
-                                Add to cart
-                              </Button>
-                            </CardOverflow>
-                          </Card>
-                        </Stack>
-                      );
-                    })
+                                <CardOverflow>
+                                  <AspectRatio sx={{ minWidth: 220 }}>
+                                    <img
+                                      src={`${url}/product/getphotoproduct/${product._id}`}
+                                      loading="lazy"
+                                      alt=""
+                                    />
+                                  </AspectRatio>
+                                </CardOverflow>
+                                <CardContent onClick={handleOpenModal}>
+                                  <Typography level="body-xs">
+                                    {product.category.name}
+                                  </Typography>
+                                  <Link
+                                    href="#product-card"
+                                    fontWeight="md"
+                                    color="neutral"
+                                    textColor="text.primary"
+                                    overlay
+                                    // endDecorator={<ArrowOutwardIcon />}
+                                  >
+                                    {product.name}
+                                  </Link>
+
+                                  <Typography
+                                    level="title-lg"
+                                    sx={{ mt: 1, fontWeight: "xl" }}
+                                    endDecorator={
+                                      <Chip
+                                        component="span"
+                                        size="sm"
+                                        variant="soft"
+                                        color="success"
+                                      >
+                                        Lowest price
+                                      </Chip>
+                                    }
+                                  >
+                                    {product.price} PKR
+                                  </Typography>
+                                  <Typography level="body-sm">
+                                    (
+                                    <b>
+                                      {product.availablequantity > 1000
+                                        ? `${(
+                                            product.availablequantity / 1000
+                                          ).toFixed(0)}k`
+                                        : product.availablequantity}
+                                    </b>{" "}
+                                    left in stock!)
+                                  </Typography>
+                                </CardContent>
+
+                                <CardOverflow
+                                  onClick={() => addToCart(product)}
+                                >
+                                  <Button
+                                    variant="solid"
+                                    sx={{ backgroundColor: "#1D1F1D" }}
+                                    size="lg"
+                                  >
+                                    Add to cart
+                                  </Button>
+                                </CardOverflow>
+                              </Card>
+                            </Stack>
+                          </motion.div>
+                        );
+                      })}
+                  </AnimatePresence>
                 )}
               </Box>
             )}

@@ -26,12 +26,7 @@ import Order from "./components/pages/user/order";
 import UserProfile from "./components/pages/user/profile";
 import AllProducts from "./components/pages/admin/allproducts";
 import Cart from "./components/pages/cart";
-// import { useAuth } from "./context/authRoute.jsx";
-// import Admin from "./components/routes/adminroute";
 const App = () => {
-  // const { user, role } = useStateContext();
-  // const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
-  // console.log(role);
   return (
     <BrowserRouter>
       <Routes>
