@@ -2,53 +2,30 @@ import React, { useEffect } from "react";
 import Layout from "../layout/layout";
 import url from "../../utils/exporturl";
 import axios from "axios";
-import { useCartContext } from "../../context/cartContex";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CloseRounded } from "@mui/icons-material";
-import { Typography, Button } from "@mui/material";
+import { Typography } from "@mui/material";
+import { useContext } from "react";
+import { CartContext } from "../../context/cartContex";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
+
 const Cart = () => {
-  const { cart, addToCart, deleteFromCart } = useCartContext();
-  useEffect(() => {
-    console.log(cart);
-    cart;
-  }, []);
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.post(`${url}/product/fetchproductcart`, {
-        productIds: cart,
-      });
-      const data = response.data;
-      if (data && data.products) {
-        setProductss(
-          data.products.map((product) => {
-            return {
-              _id: product._id,
-              name: product.name,
-              description: product.description,
-              quantity: product.quantity,
-              price: product.price,
-              slug: product.slug,
-              category: product.category,
-            };
-          })
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  const [popLayout, setPopLayout] = useState(false);
   const [productss, setProductss] = useState([]);
-  useEffect(() => {
-    fetchProducts();
-  }, [cart]);
-  // console.log(productss);
-
-  const totalPrice = productss.reduce(
-    (total, product) => total + product.price,
-    0
-  );
+  const [items, setItems] = useState([]);
+  const variants = {
+    initial: { perspective: 0 },
+    animate: { perspective: 1000 },
+  };
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    clearCart,
+    deletesingleproduct,
+    getCartTotal,
+  } = useContext(CartContext);
   return (
     <Layout title={"Ecommerce | Cart"} className="overflow-hidden">
       <div className=" mx-auto my-4 container">
@@ -56,100 +33,188 @@ const Cart = () => {
           <div className="flex items-center justify-center">
             <h1 className="text-2xl font-semibold text-gray-900">Your Cart</h1>
           </div>
-          <div className="mx-auto mt-8 max-w-md ">
+          <motion.div
+            layout
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            variants={variants}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ type: "tween" }}
+            className="mx-auto mt-8 max-w-md "
+          >
             <div className="rounded-3xl bg-white shadow-lg">
               <div className="px-4 py-6 sm:px-8 sm:py-10">
                 <div className="flow-root">
-                  <ul className="-my-8">
-                    {productss.length === 0 ? (
-                      <Typography variant="h6" textAlign={"center"}>
-                        No Product in Cart
-                      </Typography>
+                  <Reorder.Group
+                    axis="y"
+                    values={items}
+                    onReorder={setItems}
+                    className="-my-8"
+                  >
+                    {cartItems.length === 0 ? (
+                      <>
+                        <Typography variant="h6" textAlign={"center"}>
+                          No Product in Cart
+                        </Typography>
+                      </>
                     ) : (
-                      productss.map((product) => {
-                        return (
-                          <li
-                            className="flex flex-col space-y-3 py-6 text-left sm:flex-row sm:space-x-5 sm:space-y-0"
-                            key={product._id}
-                          >
-                            <div className="shrink-0 relative">
-                              {/* <span className="absolute top-1 left-1 flex h-6 w-6 items-center justify-center rounded-full border bg-white text-sm font-medium text-gray-500 shadow sm:-top-2 sm:-right-2"> */}
-                              {/* {product.quantity} */}
-                              {/* </span> */}
-                              <img
-                                className="h-24 w-24 max-w-full rounded-lg object-cover"
-                                src={`${url}/product/getphotoproduct/${product._id}`}
-                                loading="lazy"
-                                alt=""
-                              />
-                            </div>
-                            <div className="relative flex flex-1 flex-col justify-between">
-                              <div className="sm:col-gap-5 sm:grid sm:grid-cols-2">
-                                <div className="pr-8 sm:pr-5">
-                                  <p className="text-base font-semibold text-gray-900">
-                                    {product.name}
-                                  </p>
-                                  <p className="mx-0 mt-1 mb-0 text-sm text-gray-400">
-                                    {product.description}
-                                  </p>
+                      <AnimatePresence mode={popLayout ? "popLayout" : "sync"}>
+                        {cartItems.map((product) => {
+                          return (
+                            <motion.div
+                              whileHover={{ scale: 1.1 }}
+                              layout
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{
+                                scale: 1,
+                                opacity: 1,
+                              }}
+                              variants={variants}
+                              exit={{ scale: 0.8, opacity: 0 }}
+                              transition={{ type: "spring" }}
+                              key={product._id}
+                            >
+                              <Reorder.Item
+                                value={product}
+                                key={product}
+                                className="flex flex-col space-y-3 py-6 text-left sm:flex-row sm:space-x-5 sm:space-y-0"
+                              >
+                                <div className="shrink-0 relative">
+                                  <span
+                                    className="absolute top-1 left-1 flex h-6 w-34 items-center justify-center rounded-full border bg-white text-sm font-medium text-gray-500 shadow sm:-top-2 sm:-right-2"
+                                    style={{
+                                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                    }}
+                                  >
+                                    {product.availablequantity <
+                                    product.salequantity
+                                      ? 0
+                                      : product.availablequantity -
+                                        product.salequantity}{" "}
+                                    left
+                                  </span>
+
+                                  <img
+                                    className="h-24 w-24 max-w-full rounded-lg object-cover"
+                                    src={`${url}/product/getphotoproduct/${product._id}`}
+                                    loading="lazy"
+                                    alt=""
+                                  />
                                 </div>
-                                <div className="mt-4 flex items-end justify-between sm:mt-0 sm:items-start sm:justify-end">
-                                  <p className="shrink-0 w-20 text-base font-semibold text-gray-900 sm:order-2 sm:ml-8 sm:text-right">
-                                    {product.price}
-                                  </p>
+                                <div className="relative flex flex-1 flex-col justify-between">
+                                  <div className="sm:col-gap-5 sm:grid sm:grid-cols-2">
+                                    <div className="pr-8 sm:pr-5">
+                                      <p className="text-base font-semibold text-gray-900">
+                                        {product.name}
+                                      </p>
+                                      <p className="mx-0 mt-1 mb-0 text-sm text-gray-400">
+                                        {product.category.name}
+                                      </p>
+                                    </div>
+                                    <div className="mt-4 flex items-end justify-between sm:mt-0 sm:items-start sm:justify-end">
+                                      <p className="shrink-0 w-20 text-base font-semibold text-gray-900 sm:order-2 sm:ml-8 sm:text-right">
+                                        {product.price} PKR
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="absolute top-0 right-0  flex sm:bottom-0 sm:top-auto">
+                                    <button
+                                      type="button"
+                                      className="flex rounded p-0 text-center text-gray-500 transition-all duration-200 ease-in-out focus:shadow hover:text-gray-900"
+                                      disabled={product.salequantity === 0}
+                                      onClick={() => {
+                                        deletesingleproduct(product);
+                                        // removeFromCart(product);
+                                        // console.log('clicked')
+                                      }}
+                                    >
+                                      <CloseRounded />
+                                    </button>
+                                  </div>
+                                  <div className="flex items-center ">
+                                    <button
+                                      className="px-2 mx-2   text-gray-800 text-xs font-bold uppercase rounded-lg  border-2 border-gray-800 "
+                                      disabled={
+                                        product.availablequantity <=
+                                        product.salequantity
+                                      }
+                                      onClick={() => {
+                                        addToCart(product);
+                                      }}
+                                    >
+                                      +
+                                    </button>
+                                    <p>{product && product.salequantity}</p>
+                                    <button
+                                      className="px-2 mx-2   text-gray-800 text-xs font-bold uppercase rounded-lg    border-2 border-gray-800 "
+                                      onClick={() => {
+                                        removeFromCart(product);
+                                      }}
+                                    >
+                                      -
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="absolute top-0 right-0  flex sm:bottom-0 sm:top-auto">
-                                <button
-                                  type="button"
-                                  className="flex rounded p-0 text-center text-gray-500 transition-all duration-200 ease-in-out focus:shadow hover:text-gray-900"
-                                  onClick={() => {
-                                    deleteFromCart(product._id);
-                                    // console.log('clicked')
-                                  }}
-                                >
-                                  <CloseRounded />
-                                </button>
-                                {/* <Button variant="outlined" onClick={deleteFromCart(product._id)}
-                                
-                                >
-                                  <CloseRounded />
-                                </Button> */}
-                              </div>
-                            </div>
-                          </li>
-                        );
-                      })
+                              </Reorder.Item>
+                            </motion.div>
+                          );
+                        })}
+                      </AnimatePresence>
                     )}
-                  </ul>
+                  </Reorder.Group>
                 </div>
-                <div className="mt-6 space-y-3 border-t border-b py-8">
+                <motion.div
+                  layout
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                  }}
+                  variants={variants}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ type: "spring" }}
+                  className="mt-6 space-y-3 border-t border-b py-8"
+                >
                   <div className="flex items-center justify-between">
                     <p className="text-gray-400">Subtotal</p>
                     <p className="text-lg font-semibold text-gray-900">
-                      PKR {totalPrice}
+                      PKR: {getCartTotal()}
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-gray-400">Shipping</p>
                     <p className="text-lg font-semibold text-gray-900">PKR 0</p>
                   </div>
-                </div>
+                </motion.div>
                 <div className="mt-6 flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Total</p>
                   <p className="text-2xl font-semibold text-gray-900">
                     <span className="text-xs font-normal text-gray-400">
                       PKR
                     </span>{" "}
-                    {totalPrice}
+                    {getCartTotal()}
                   </p>
                 </div>
-                <div className="mt-6 text-center">
+                <motion.div
+                  layout
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                  }}
+                  variants={variants}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ type: "tween" }}
+                  className="mt-6 text-center"
+                >
                   <button
                     type="button"
                     className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
                     onClick={() => {
-                      if (cart.length === 0) {
+                      if (cartItems.length === 0) {
                         toast.error("Cart is empty");
                       } else {
                         toast.success("Order Placed");
@@ -172,10 +237,10 @@ const Cart = () => {
                       />
                     </svg>
                   </button>
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </Layout>

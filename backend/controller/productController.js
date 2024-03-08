@@ -4,7 +4,7 @@ import slugify from "slugify";
 import categorymodel from "../models/categorymodel.js";
 export const createProductController = async (req, res) => {
   try {
-    const { name, slug, description, price, category, quantity, shipping } =
+    const { name, slug, description, price, category, quantity, shipping,salequantity } =
       req.fields;
     const { photo } = req.files;
     if (!name) {
