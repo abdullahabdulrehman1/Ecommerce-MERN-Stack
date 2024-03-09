@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import UserMenu from '../../layout/usermenu'
 import Layout from '../../layout/layout'
+import { Typography } from '@mui/joy';
+import { useNavigate } from 'react-router-dom';
+
 
 const Order = () => {
+  
   return (
     <Layout title={"Ecommerce | All Orders"}>
     <div className="container border border-black mx-auto rounded-lg">
@@ -11,8 +15,12 @@ const Order = () => {
           <UserMenu />
         </div>
         <div className="col-span-9  px-10 py-1">
-       <h1>All Orders</h1>
+        <Typography level="h3" fontWeight="thin" sx={{ mt: 2, mx: 2 }}>
+              All Orders
+            </Typography>
         </div>
+
+
       </div>
     </div>
   </Layout>

@@ -8,7 +8,7 @@ import { CloseRounded } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { useContext } from "react";
 import { CartContext } from "../../context/cartContex";
-import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { motion, AnimatePresence,MotionValue,useSpring, useTransform, Reorder } from "framer-motion";
 
 const Cart = () => {
   const [popLayout, setPopLayout] = useState(false);
@@ -18,6 +18,7 @@ const Cart = () => {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
   };
+
   const {
     cartItems,
     addToCart,
@@ -26,6 +27,12 @@ const Cart = () => {
     deletesingleproduct,
     getCartTotal,
   } = useContext(CartContext);
+
+  const total = getCartTotal();
+
+
+
+
   return (
     <Layout title={"Ecommerce | Cart"} className="overflow-hidden">
       <div className=" mx-auto my-4 container">

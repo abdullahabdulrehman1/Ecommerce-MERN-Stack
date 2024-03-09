@@ -326,28 +326,27 @@ export const Home = () => {
     const fetchRelatedProducts = async () => {
       try {
         if (singleProduct && singleProduct.category) {
-        const response = await axios.get(
-          `${url}/product/similarproduct/${singleProduct._id}/${singleProduct.category._id}`
-        );
-        const data = response.data;
-        SetRelatedProducts(
-          data.similarProducts.map((product) => {
-            return {
-              _id: product._id,
-              name: product.name,
-              description: product.description,
-              availablequantity: product.quantity,
-              price: product.price,
-              slug: product.slug,
-              salequantity: product.salequantity,
-              category: product.category,
-            };
-          })
-        );}
-        else {
+          const response = await axios.get(
+            `${url}/product/similarproduct/${singleProduct._id}/${singleProduct.category._id}`
+          );
+          const data = response.data;
+          SetRelatedProducts(
+            data.similarProducts.map((product) => {
+              return {
+                _id: product._id,
+                name: product.name,
+                description: product.description,
+                availablequantity: product.quantity,
+                price: product.price,
+                slug: product.slug,
+                salequantity: product.salequantity,
+                category: product.category,
+              };
+            })
+          );
+        } else {
           SetRelatedProducts([]);
         }
-
       } catch (error) {
         console.error("Error fetching related products:", error);
       }
@@ -730,17 +729,15 @@ export const Home = () => {
                         return (
                           <motion.div
                             whileHover={{ scale: 1.1 }}
-                            // transition={{ duration: 0.5 }}
                             layout
-                            initial={{ scale: 0.8, opacity: 0 }}
+                            initial={{ scale: 0.7, opacity: 0 }}
                             animate={{
                               scale: 1,
                               opacity: 1,
-                            
                             }}
                             variants={variants}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ type: "spring" }}
+                            exit={{ scale: 0.7, opacity: 0 }}
+                            transition={{ type: "spring",duration: 0.5 }}
                             key={product._id}
                           >
                             <Stack
