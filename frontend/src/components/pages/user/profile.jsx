@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Layout from "../../layout/layout";
 import UserMenu from "../../layout/usermenu";
 import { Typography } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Box from "@mui/material/Box";
-import {motion }from "framer-motion"; 
+import { motion } from "framer-motion";
+import { AuthContext, useAuth } from "../../../context/authRoute";
+import url from "../../../utils/exporturl";
+import { toast } from "react-toastify";
 const UserProfile = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -13,32 +16,44 @@ const UserProfile = () => {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
   };
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    question: "",
-  });
+  const { authuser, setauthuser } = useAuth();
+  const fetchUser = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      axios.defaults.headers.common["Authorization"] = token;
+      const res = await axios.get(`${url}/auth/fetch-user/${authuser.id}`);
+      console.log(res.data);
+      setUserData({
+        id: res.data.user.id,
+        name: res.data.user.name,
+        email: res.data.user.email,
+        question: res.data.user.question,
+      });
+    } catch (error) {
+      setError("Failed to fetch user data.");
+    }
+  };
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => {
-    // Fetch user data from the server
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`${url}/auth/user`);
-        const { name, email, question } = response.data;
-        setUserData({
-          name,
-          email,
-          password: "",
-          question,
-        });
-      } catch (error) {
-        setError("Failed to fetch user data.");
-      }
-    };
+    console.log(authuser);
+  }, [authuser]);
+ 
+  const [userData, setUserData] = useState({
+   id: authuser.id,
+    name: authuser.name,
+    email: authuser.email,
+    password: "",
+    samepassword: "",
+    question: authuser.question,
 
-    fetchUserData();
-  }, []);
+  });
+
+  
+
+  
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -47,27 +62,49 @@ const UserProfile = () => {
       [name]: value,
     });
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const { name, email, password, question } = userData;
-    // Check if name, email, and password are not empty
-    if (!name || !email || !password || !question) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
+    const token = localStorage.getItem("token");
+    
     try {
-      // Update user data on the server
-      await axios.put(`${url}/auth/user`, userData);
+      axios.defaults.headers.common["Authorization"] = token;
+      const res = await axios.put(`${url}/auth/update-user/${authuser.id}`, userData);
       setError("");
-      navigate("/login");
+      if(res.data.success === true){
+        fetchUser();
+        setError(`${res.data.message}`);
+        console.log(res.data.user)
+        // Update authuser state with the updated user data
+
+        setUserData({
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email,
+          // password: res.data.user.password,
+          // samepassword: res.data.user.samepassword,
+          question: res.data.user.question,
+        });
+        setauthuser({
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email,
+          // password: res.data.user.password,
+
+          question: res.data.user.question
+        })
+        // Update userData state with the updated user data
+     
+        // Navigate to another page or refresh the current page
+        // navigate("/some-page");
+        // window.location.reload();
+      }
     } catch (error) {
       setError("Failed to update user data.");
     }
   };
 
+  console.log(authuser);
+  console.log(userData)
   return (
     <Layout title={"Ecommerce | UserProfile"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -82,22 +119,26 @@ const UserProfile = () => {
             </Typography>
             <Box sx={{ height: "full", width: "full" }}>
               <motion.div
-               layout
-               initial={{ scale: 0.8, opacity: 0 }}
-               animate={{
-                 scale: 1,
-                 opacity: 1,
-               }}
-               variants={variants}
-               exit={{ scale: 0.8, opacity: 0 }}
-               transition={{ type: "spring" }}
-              className=" flex items-center justify-center mx-auto sm:my-20   md:my-20 ">
+                layout
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                }}
+                variants={variants}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring" }}
+                className=" flex items-center justify-center mx-auto sm:my-20   md:my-20 "
+              >
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0  dark:border-gray-700">
                   <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
                       Edit Profile
                     </h1>
-                    <form className="space-y-4 md:space-y-6" action="#">
+                    <form
+                      className="space-y-4 md:space-y-6"
+                      onSubmit={handleSubmit}
+                    >
                       <div>
                         <label
                           htmlFor="email"
@@ -114,6 +155,8 @@ const UserProfile = () => {
                           onChange={handleChange}
                           className="block w-full p-3 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
                           required
+                          disabled
+                          // placeholder={authuser.email}
                         />
                       </div>
                       <div>
@@ -130,7 +173,7 @@ const UserProfile = () => {
                           value={userData.name}
                           onChange={handleChange}
                           className="block name w-full p-3 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
-                          required
+                          
                         />
                       </div>
                       <div>
@@ -145,6 +188,23 @@ const UserProfile = () => {
                           name="password"
                           id="password"
                           value={userData.password}
+                          onChange={handleChange}
+                          className="block w-full p-3 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="name"
+                          className="block mb-2 text-sm font-medium text-gray-900 "
+                        >
+                         Confirm Password
+                        </label>
+                        <input
+                          type="password"
+                          name="samepassword"
+                          id="samepassword"
+                          value={userData.samepassword}
                           onChange={handleChange}
                           className="block w-full p-3 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
                           required
@@ -180,7 +240,8 @@ const UserProfile = () => {
                       <div>
                         <button
                           type="submit"
-                          onClick={handleSubmit}
+                          // onClick={handleSubmit}
+                          // onSubmit={handleSubmit}
                           className="w-full py-3 text-white bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
                         >
                           Save Changes

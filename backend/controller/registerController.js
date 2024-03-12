@@ -179,15 +179,33 @@ export const deleteUserController = async (req, res) => {
   }
 };
 
+//update profile 
+
 export const UpdateUserController = async(req,res)=>{
   try{
     const {id} = req.params;
-    const {name,email,password,question} = req.body;
-    const user = await usermodel.findByIdAndUpdate({_id:id},{name,email,password,question});
+    const {name,email,password,samepassword,question} = req.body;
+   
+    if(password !== samepassword){
+      return res.status(400).json({message:"Password does not match"});
+    }
+    if(password.length < 6){
+      return res.status(400).json({message:"Password is too short"});
+    }
+    if(password === samepassword){
+      const hashed = await hashpassword(password);
+    
+    
+    const user = await usermodel.findByIdAndUpdate({_id:id},{password: hashed});
+  
+    res.status(200).json({message:"User fetched successfully",success: true,user: {id: user._id,name: user.name,email: user.email,question: user.question}});
+  
+   
     if(!user){
       return res.status(400).json({message:"User not found"});
     }
-    res.status(200).json({message:"User updated successfully"});
+    // res.status(200).json({message:"User updated successfully",success: true,user: {id: user._id,name: user.name,email: user.email,question: user.question}});
+  }
 
   }
   catch(error){
@@ -195,9 +213,27 @@ export const UpdateUserController = async(req,res)=>{
     res.status(500).json({message:"Internal server error"});
   }
 }
+
+export const fetchUserControler = async(req,res)=>{
+  try{
+    const {id} = req.params;
+    const user = await usermodel.findById({_id:id});
+    if(!user){
+      return res.status(400).json({message:"User not found"});
+    }
+    res.status(200).json({message:"User fetched successfully",success: true,user: {id: user._id,name: user.name,email: user.email,question: user.question}});
+  }
+  catch(error){
+    console.error(`Error: FETCHUSERCONTROLLER ERROR ${error.message}`);
+    res.status(500).json({message:"Internal server error"});
+  }
+}
+
+
 export default {
   registerController,
   deleteUserController,
+  fetchUserControler,
   loginController,
   allUsersController,
   forgotPasswordController,

@@ -1,4 +1,3 @@
-// import { data } from "autoprefixer";
 import React, {
   createContext,
   useContext,
@@ -6,10 +5,6 @@ import React, {
   useReducer,
   useState,
 } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// const StateContext = createContext();
-// const DispatchContext = createContext();
 
 export const AuthContext = createContext();
 export const useAuth = () => {
@@ -17,8 +12,6 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // const [state, dispatch] = useReducer(reducer, initialState);
-  // const [loading, setLoading] = useState(true); // Add this line
   const [authuser, setauthuser] = useState([]);
   const [isloggedin, setisloggedin] = useState(false);
   const value = {
@@ -28,19 +21,16 @@ export const AuthProvider = ({ children }) => {
     setisloggedin,
   };
   useEffect(() => {
-    setauthuser(authuser);
-    console.log(authuser); // Logs the updated authuser state
+    console.log(authuser); 
   }, [authuser]);
 
   useEffect(() => {
     setisloggedin(isloggedin);
-    console.log(isloggedin); // Logs the updated isloggedin state
+    console.log(isloggedin);
   }, [isloggedin]);
 
-  // Rest of your code...
+
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// export const useStateContext = () => useContext(StateContext);
-// export const useDispatchContext = () => useContext(DispatchContext);

@@ -119,7 +119,7 @@ const Login = () => {
         setisloggedin(true);
         setTimeout(() => {
           navigate("/");
-        }, 2000);
+        }, 1000);
         //  console.log(res.data.user);
         console.log(authuser);
         // localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -214,6 +214,8 @@ const Login = () => {
                     name="password"
                     id="password"
                     value={formData.password}
+                    onFocus={() => setHangUp(false)}
+                    onMouseOver={() => setHangUp(true)}
                     onChange={(event) => {
                       handleChange(event);
                       setHangUp(true);

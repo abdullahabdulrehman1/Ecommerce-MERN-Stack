@@ -234,6 +234,9 @@ const Register = () => {
                       name="password"
                       id="password"
                       value={formData.password}
+                      onFocus={() => setHangUp(false)}
+                    
+                    onMouseLeave={() => setHangUp(false)}
                       onChange={(event) => {
                         handleChange(event);
                         setHangUp(true);
