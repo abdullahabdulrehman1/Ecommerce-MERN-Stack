@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authroute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productroutes.js";
+import orderRoutes from "./routes/orderroute.js";
 dotenv.config();
 const app = express();
 connectDB();
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 app.use("/category", categoryRoutes);
 app.use("/product", productRoutes);
 app.use("/auth", authRoutes);
+app.use("/order",orderRoutes)
 
 const HOST = process.env.HOST;
 

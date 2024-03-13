@@ -50,6 +50,7 @@ router.put(
   formidable(),
   updateProductController
 );
+
 router.post("/productfilter", productFilterController);
 router.get("/productsearch/:query", productSearchController);
 router.post("/fetchproductcart", fetchProductsCart);

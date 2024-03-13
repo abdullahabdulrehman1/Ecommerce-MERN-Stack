@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   };
   useEffect(() => {
     console.log(authuser); 
+    // setauthuser(authuser);
   }, [authuser]);
 
   useEffect(() => {

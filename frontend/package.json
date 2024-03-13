@@ -19,6 +19,7 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.15",
     "@mui/x-data-grid": "^6.19.3",
     "@mui/x-data-grid-pro": "^6.19.3",
+    "@stripe/stripe-js": "^3.0.8",
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
     "concurrently": "^8.2.1",

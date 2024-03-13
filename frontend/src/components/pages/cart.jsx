@@ -8,16 +8,33 @@ import { CloseRounded } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { useContext } from "react";
 import { CartContext } from "../../context/cartContex";
-import { motion, AnimatePresence,MotionValue,useSpring, useTransform, Reorder } from "framer-motion";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  motion,
+  AnimatePresence,
+  MotionValue,
+  useSpring,
+  useTransform,
+  Reorder,
+} from "framer-motion";
+import { useAuth } from "../../context/authRoute";
+import Login from "./Auth/login";
+import { useNavigate } from "react-router-dom";
+import { MdBookmarkBorder } from "react-icons/md";
+import { publicstripekey } from "../../utils/stripekey";
 
 const Cart = () => {
   const [popLayout, setPopLayout] = useState(false);
   const [productss, setProductss] = useState([]);
   const [items, setItems] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [success, setsuccess] = useState(false);
   const variants = {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
   };
+  const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
 
   const {
     cartItems,
@@ -29,10 +46,73 @@ const Cart = () => {
   } = useContext(CartContext);
 
   const total = getCartTotal();
+  // const { isloggedin } = useAuth();
+  const navigate = useNavigate();
+  //payment integration
+  const token = localStorage.getItem("token");
 
+  const makeOrder = async () => {
+    const stripe = await loadStripe(`${publicstripekey}`);
+    // const stripe = {
+    //   products: cartItems,
+    //   total: total,
+    // };
+    // const body = { products: cartItems, total: total };
+    const headers = {
+      "content-type": "application/json",
+    };
+    axios.defaults.headers.common["Authorization"] = token;
 
+    const res = await axios.post(`${url}/order/createorder`, {
+      products: cartItems,
+      total: total,
+    });
+    console.log(res.data.id);
+    const result = await stripe.redirectToCheckout({
+      sessionId: res.data.id,
+    });
+    console.log(result);
 
+    if (res.status === 200) {
+      toast.success("Order Placed Successfully");
+      clearCart();
+    } else {
+      toast.error("Order Not Placed");
+      console.log(res);
+    }
+  };
+  const AuthCheck = async () => {
+    try {
+      // setLoading(true);
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = token;
+        const res = await axios.get(`${url}/auth/user-auth`);
+        setauthuser(res.data.user);
+        setisloggedin(true);
+        console.log(res.data);
+        console.log(res.data.message);
+        console.log(res.data.success);
+        console.log(res.data);
 
+        if (res.data.success === true) {
+          setsuccess(true);
+        } else {
+          localStorage.removeItem("token");
+          setsuccess(false);
+        }
+      }
+    } catch (err) {
+      if (err.response && err.response.data.success === false) {
+        localStorage.removeItem("token");
+        setsuccess(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    AuthCheck();
+  }, []);
   return (
     <Layout title={"Ecommerce | Cart"} className="overflow-hidden">
       <div className=" mx-auto my-4 container">
@@ -217,33 +297,63 @@ const Cart = () => {
                   transition={{ type: "tween" }}
                   className="mt-6 text-center"
                 >
-                  <button
-                    type="button"
-                    className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
-                    onClick={() => {
-                      if (cartItems.length === 0) {
-                        toast.error("Cart is empty");
-                      } else {
-                        toast.success("Order Placed");
-                      }
-                    }}
-                  >
-                    Place Order
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
+                  {isloggedin ? (
+                    <button
+                      type="button"
+                      className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                      onClick={() => {
+                        if (cartItems.length === 0) {
+                          toast.error("Cart is empty");
+                        } else {
+                          makeOrder();
+                        }
+                      }}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13 7l5 5m0 0l-5 5m5-5H6"
-                      />
-                    </svg>
-                  </button>
+                      Place Order
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13 7l5 5m0 0l-5 5m5-5H6"
+                        />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                      onClick={() => {
+                        if (cartItems.length === 0) {
+                          toast.error("Cart is empty");
+                        } else {
+                          navigate("/login");
+                        }
+                      }}
+                    >
+                      Please Login to Place Order
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13 7l5 5m0 0l-5 5m5-5H6"
+                        />
+                      </svg>
+                    </button>
+                  )}
                 </motion.div>
               </div>
             </div>
