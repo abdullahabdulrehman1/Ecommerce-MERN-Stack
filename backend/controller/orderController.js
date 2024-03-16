@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import express from "express";
 import Stripe from "stripe";
-import Order from "../models/orderModel.js";
+import ordermodel from "../models/ordermodel.js";
 import url from "../helpers/url.js";
 import dotenv from "dotenv";
 
@@ -34,7 +34,7 @@ export const createOrderController = async (req, res) => {
 };
 
 export const getOrderByIdController = async (req, res) => {
-  const order = await Order.findById(req.params.id).populate(
+  const order = await ordermodel.findById(req.params.id).populate(
     "user",
     "name email"
   );
@@ -46,7 +46,7 @@ export const getOrderByIdController = async (req, res) => {
   }
 };
 export const updateOrderToPaidController = async (req, res) => {
-  const order = await Order.findById(req.params.id);
+  const order = await ordermodel.findById(req.params.id);
   if (order) {
     order.isPaid = true;
     order.paidAt = Date.now();
@@ -64,11 +64,11 @@ export const updateOrderToPaidController = async (req, res) => {
   }
 };
 export const getMyOrdersController = async (req, res) => {
-  const orders = await Order.find({ user: req.user._id });
+  const orders = await ordermodel.find({ user: req.user._id });
   res.json(orders);
 };
 export const getOrdersController = async (req, res) => {
-  const orders = await Order.find({}).populate("user", "id name");
+  const orders = await ordermodel.find({}).populate("user", "id name");
   res.json(orders);
 };
 
