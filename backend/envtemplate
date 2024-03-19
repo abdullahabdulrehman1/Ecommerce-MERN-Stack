@@ -1,0 +1,14 @@
+// PORT = 
+// HOST = 
+// JSON_WEB = 
+// MONGO_URL = 
+// DEV_ENV = 
+// Stripe_Secret_Key = 
+// Stripe_Public_Key = 
+
+
+
+// please change this file name to .env and add all the configuration in order to run the program
+// Path: backend/.env
+
+

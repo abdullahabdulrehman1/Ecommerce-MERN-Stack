@@ -5,6 +5,7 @@ import { createOrderController, getOrderByIdController, updateOrderToPaidControl
 import { requireSignin } from "../middelwares/authMiddleware.js";
 const router = express.Router();
 router.post("/createorder", requireSignin,createOrderController);
+router.get("/getorder/:id", requireSignin,getOrdersController);
 
 
 export default router;
