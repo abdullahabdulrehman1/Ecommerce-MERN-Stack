@@ -11,3 +11,5 @@ and also update all the fields             ==>backend/envtemplate
 update the frontend url in this file       ==>backend/helpers/url.js
 npm i 
 npm run server 
+
+to access admin dashboard change the role to 1 in MongoDb database then login 
