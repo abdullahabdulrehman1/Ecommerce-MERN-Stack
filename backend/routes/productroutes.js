@@ -33,8 +33,7 @@ router.get(
 );
 router.get(
   "/getphotoproduct/:pid",
-  // requireSignin,
-  // isAdmin,
+
   productPhotoController
 );
 router.delete(
