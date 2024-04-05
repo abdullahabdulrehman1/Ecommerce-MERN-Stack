@@ -24,7 +24,7 @@ export const createProductController = async (req, res) => {
     }
 
     if (!description) {
-      return res
+      return res``
         .status(400)
         .json({ success: false, message: "Description is required" });
     }
@@ -318,8 +318,7 @@ export const getSimilarProductController = async (req, res) => {
 
 export const fetchProductsCart = async (req, res) => {
   try {
-    const { productIds } = req.body;
-    // Convert productIds to an array if it's not
+const { id } = req.query;    // Convert productIds to an array if it's not
     const productIdsArray = Array.isArray(productIds)
       ? productIds
       : [productIds];

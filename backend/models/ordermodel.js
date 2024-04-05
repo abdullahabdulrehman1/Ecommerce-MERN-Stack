@@ -1,33 +1,41 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
+const orderSchema = mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User', // Assuming you have a User model
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  products: [{
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    salequantity: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    // Include other product fields here
+  }],
+  total: {
+    type: Number,
+    required: true,
+  },
+  stripeSession: {
+    type: String,
+    required: true,
+  },
+}, {
+  timestamps: true, // Adds createdAt and updatedAt fields
+});
 
-const orderSchema = new mongoose.Schema({
-    products: [
-        {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product",
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            },
-        },
-    ],
-    buyer: {
-        type: mongoose.ObjectId,
-        ref: "User",
-    },
-  
-    payment : {
-       
-    },
-
-    status: {
-        type: String,
-        default: "Not processed",
-        enum: ["Not processed", "Processing", "Shipped", "Delivered", "Cancelled"],
-    },  
-
-}, { timestamps: true });
 export default mongoose.model ("Order", orderSchema);
+// status: {
+//     type: String,
+//     default: "Not processed",
+//     enum: ["Not processed", "Processing", "Shipped", "Delivered", "Cancelled"],
+// },  

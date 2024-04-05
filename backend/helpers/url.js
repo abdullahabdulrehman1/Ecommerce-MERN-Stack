@@ -1,2 +1,2 @@
-export const url = "http://192.168.1.33:5173"
+export const url = "http://127.0.0.1:5173"
 export default url;

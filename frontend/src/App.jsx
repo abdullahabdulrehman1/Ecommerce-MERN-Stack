@@ -7,8 +7,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./components/pages/Home";
-import Contact from "./components/pages/contact";
-import Policy from "./components/pages/policy";
+import Contact from "./components/pages/Contact";
+import Policy from "./components/pages/Policy";
 import Register from "./components/pages/Auth/register";
 import Login from "./components/pages/Auth/login";
 // import { AuthProvider, useAuth, useStateContext } from "./context/authRoute";
