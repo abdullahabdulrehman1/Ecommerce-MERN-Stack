@@ -1,1 +1,3 @@
 backend/.env
+backend/helpers/authhelper.js
+frontend/utils/exporturl.jsx
