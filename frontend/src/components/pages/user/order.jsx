@@ -13,50 +13,73 @@ import { Rating } from "primereact/rating";
 import { Tag } from "primereact/tag";
 import moment from "moment";
 import { OrderList } from "primereact/orderlist";
+import CircularProgress from '@mui/material/CircularProgress';
+
 const Order = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [order, setOrder] = useState([]);
   const [products, setProducts] = useState([{}]);
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
+  const [updatedOrderStatus,setUpdatedOrderStatus] = useState([{}]);
   const getOrders = async () => {
     const token = localStorage.getItem("token");
     try {
       axios.defaults.headers.common["Authorization"] = token;
       const response = await axios.get(`${url}/order/getorder/${authuser.id}`);
+
       console.log(authuser.id);
       setOrder(response.data);
       // Flatten the products array for all orders
-      const allProducts = response.data.flatMap((order) => order.products);
+      const allProducts = response.data.flatMap((order) =>
+        order.products.map((product) => ({
+          ...product,
+          orderid: order._id,
+          ispaid: order.ispaid,
+          ordername: order.name,
+          createdAt: order.createdAt,
+        })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
       setProducts(allProducts);
       console.log(response.data);
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    if (authuser || isloggedin) {
-      getOrders();
-    }
+    useEffect(() => {
+    setIsLoading(true);
+    getOrders().then(() => {
+      setIsLoading(false);
+    });
   }, []);
-  const orderDataTemplate = (rowData) => {
-    order.map((orders)=>{
-      const date = moment(orders.createdAt);
-      const now = moment();
-  
-      if (date.isSame(now, "day")) {
-        return "Today";
-      } else if (date.isSame(now.clone().subtract(1, "day"), "day")) {
-        return "Yesterday";
-      } else if (date.isSame(now.clone().add(1, "day"), "day")) {
-        return "Tomorrow";
-      } else {
-        return date.format("DD/MM/YYYY");
-      }
+  const getUpdatedOrder = async () => {
+  try {
+    const promises = products.map(async (product) => {
+      const res = await axios.get(`${url}/order/getmyorderstatus/${product.orderid}`);
+      return res.data;
+    });
 
-    })
-   
+    const updatedOrders = await Promise.all(promises);
+
+    setOrder(updatedOrders);
+  } catch (error) {
+    console.log(error);
+  }
+};
+  console.log(products)
+  if(order !==null){
+
+useEffect(()=>{
+  getUpdatedOrder();
+ }
+ ,[products])
+}
+else{}
+  const orderDataTemplate = (rowData) => {
+    return <span>{moment(rowData.createdAt).format("DD-MM-YYYY")}</span>;
   };
   const rowDataTemplate = (rowData) => {
     const imageUrl = `${url}/product/getphotoproduct/${rowData._id}`;
+    // console.log(rowData._id);
     return (
       <img
         src={imageUrl}
@@ -102,29 +125,40 @@ const Order = () => {
                 No Orders Found
               </Typography>
             ) : (
+             isLoading ?(
+             
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+               <CircularProgress style={{color: "grey"}}/>
+              </div>
+
+        
+              ):(
+              
               <DataTable
-                value={products}
-                header={header}
-                style={{ minWidth: "20rem" }}
-                footer={footer}
-                tableStyle={{ minWidth: "60rem", marginTop: "45px" }}
-                className="p-datatable-gridlines"
-              >
-                <Column
-                  field="name"
-                  style={{ minWidth: "2rem", maxWidth: "10rem" }}
-                  header="Name"
-                ></Column>
-                <Column header="Image" body={rowDataTemplate}></Column>
-                <Column field="price" header="Price" body={""}></Column>
-                <Column field="salequantity" header="Quantity"></Column>
-                <Column header="Status" body={""}></Column>
-                <Column
-                  header="Date"
-                  body={orderDataTemplate}
-                  field={"createdAt"}
-                ></Column>
-              </DataTable>
+              value={products}
+              header={header}
+              style={{ minWidth: "20rem" }}
+              footer={footer}
+              tableStyle={{ minWidth: "60rem", marginTop: "45px" }}
+              className="p-datatable-gridlines"
+            >
+              <Column
+                field="name"
+                style={{ minWidth: "2rem", maxWidth: "10rem" }}
+                header="Name"
+              ></Column>
+              <Column header="Image" body={rowDataTemplate}></Column>
+              <Column field="price" header="Price" body={""}></Column>
+              <Column field="salequantity" header="Quantity"></Column>
+              <Column header="Status" field="ispaid" body={''}></Column>
+              <Column
+                header="Date"
+                body={orderDataTemplate}
+                field={"createdAt"}
+              ></Column>
+            </DataTable>
+
+              )
             )}
           </div>
         </div>

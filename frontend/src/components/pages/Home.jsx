@@ -383,8 +383,8 @@ export const Home = () => {
                   overflow: "auto",
                   margin: 2,
                   padding: 4,
-                  borderRadius: 16,
-                  backgroundColor: "rgba(257, 255, 260, 0.9)",
+                 
+                  backgroundColor: "rgba(257, 255, 260, 1)",
                 }}
               >
                 {singleProduct && (

@@ -26,34 +26,36 @@ export const createOrderController = async (req, res) => {
             product_data: {
               name: product.name,
             },
-            unit_amount: product.price * 100,
+            unit_amount: (product.price) * 100,
           },
           quantity: product.salequantity,
+        
         };
       }),
+    
       success_url: `${url}/`,
       cancel_url: `${url}/cart`,
     });
-    const retrievedPaymentIntent = await stripe.paymentIntents;
-    console.log(retrievedPaymentIntent);
-
-    console.log(user);
+    // console.log(status);
     // If session creation is successful, store order details in Order model
     const order = new ordermodel({
       user: String(user.id), // Assuming user._id is available
       email: user.email,
       name: user.name,
-      isPaid: false,
+      ispaid: session.payment_status,
+      
       products: products.map((product) => ({
         ...product,
         quantity: product.salequantity, // Add quantity field
       })),
       total: total,
+      
       stripeSession: session.id, // Store Stripe session ID for reference
     });
-
+    
     await order.save();
-
+    
+    console.log(session.payment_status);
     res.status(200).json({ id: session.id, order: order });
   } catch (error) {
     // If session creation fails, respond with error message
@@ -75,25 +77,30 @@ export const getOrderByIdController = async (req, res) => {
 
 export const updateOrderToPaidController = async (req, res) => {
   try {
-    const order = await ordermodel.findById(req.params._id);
-
-    if (order) {
-      order.isPaid = true;
-      order.paidAt = Date.now();
-      order.paymentResult = {
-        id: req.body.id,
-        status: req.body.status,
-        update_time: req.body.update_time,
-        email_address: req.body.payer.email_address,
-      };
-
-      const updatedOrder = await order.save();
-
-      res.status(200).json(updatedOrder);
-    } else {
-      res.status(404).json({ message: 'Order not found' });
+    console.log(req.params.id)
+    const order = await ordermodel.findById(req.params.id);
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
     }
+    const session = await stripe.checkout.sessions.retrieve(order.stripeSession);
+    
+    
+    order.ispaid = session.payment_status;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.payer ? req.body.payer.email_address : undefined,
+    };
+  
+
+    const updatedOrder = await order.save();
+  
+    res.status(200).json(updatedOrder);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };

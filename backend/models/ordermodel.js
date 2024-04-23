@@ -29,6 +29,10 @@ const orderSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  ispaid: {
+    type: String,
+    
+  }
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields
 });

@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./context/authRoute.jsx";
+
 // import { SearchProvider } from "./context/searchRoute.jsx";
 import { CartProvider } from "./context/cartContex.jsx";
 

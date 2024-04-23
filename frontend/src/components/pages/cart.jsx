@@ -66,6 +66,7 @@ const Cart = () => {
     const res = await axios.post(`${url}/order/createorder`, {
       products: cartItems,
       total: total,
+      
       user: authuser,
     });
     console.log(res.data.id);
