@@ -18,7 +18,11 @@ export const createOrderController = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-
+      shipping_address_collection:
+      {
+        allowed_countries: ['US', 'CA', 'PK'],
+        
+      },
       line_items: products.map((product) => {
         return {
           price_data: {
@@ -84,8 +88,7 @@ export const updateOrderToPaidController = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
     const session = await stripe.checkout.sessions.retrieve(order.stripeSession);
-    
-    
+ 
     order.ispaid = session.payment_status;
     order.paidAt = Date.now();
     order.paymentResult = {

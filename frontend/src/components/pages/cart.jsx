@@ -5,7 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CloseRounded } from "@mui/icons-material";
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { useContext } from "react";
 import { CartContext } from "../../context/cartContex";
 import { loadStripe } from "@stripe/stripe-js";
@@ -277,6 +277,7 @@ const Cart = () => {
                     <p className="text-gray-400">Shipping</p>
                     <p className="text-lg font-semibold text-gray-900">PKR 0</p>
                   </div>
+                 
                 </motion.div>
                 <div className="mt-6 flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Total</p>
@@ -286,7 +287,9 @@ const Cart = () => {
                     </span>{" "}
                     {getCartTotal()}
                   </p>
+
                 </div>
+                
                 <motion.div
                   layout
                   initial={{ scale: 0.8, opacity: 0 }}

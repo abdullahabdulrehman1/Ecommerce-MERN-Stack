@@ -17,7 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const Order = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState([{}]);
   const [products, setProducts] = useState([{}]);
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
   const [updatedOrderStatus,setUpdatedOrderStatus] = useState([{}]);
@@ -66,14 +66,12 @@ const Order = () => {
   }
 };
   console.log(products)
-  if(order !==null){
 
 useEffect(()=>{
   getUpdatedOrder();
  }
  ,[products])
-}
-else{}
+
   const orderDataTemplate = (rowData) => {
     return <span>{moment(rowData.createdAt).format("DD-MM-YYYY")}</span>;
   };
@@ -141,6 +139,9 @@ else{}
               footer={footer}
               tableStyle={{ minWidth: "60rem", marginTop: "45px" }}
               className="p-datatable-gridlines"
+              paginator rows={5} 
+              activePage={1}
+              // rowsPerPageOptions={[5, 10, 25, 50]}
             >
               <Column
                 field="name"
