@@ -60,6 +60,7 @@ export const createOrderController = async (req, res) => {
     await order.save();
     
     console.log(session.payment_status);
+        
     res.status(200).json({ id: session.id, order: order });
   } catch (error) {
     // If session creation fails, respond with error message
@@ -97,8 +98,17 @@ export const updateOrderToPaidController = async (req, res) => {
       update_time: req.body.update_time,
       email_address: req.body.payer ? req.body.payer.email_address : undefined,
     };
-  
-
+    
+    // Get the delivery details
+    const deliveryDetails = session.shipping_details;
+    console.log(deliveryDetails.address.city);
+    // You can now use deliveryDetails.name, deliveryDetails.phone, and deliveryDetails.address
+     order.shippingAddress = {
+      line1: deliveryDetails.address.line1,
+      city: deliveryDetails.address.city,
+      postalCode: deliveryDetails.address.postal_code,
+      country: deliveryDetails.address.country,
+    };
     const updatedOrder = await order.save();
   
     res.status(200).json(updatedOrder);

@@ -32,7 +32,14 @@ const orderSchema = mongoose.Schema({
   ispaid: {
     type: String,
     
-  }
+  },
+  shippingAddress: {
+    line1: { type: String},
+    line2: { type: String },
+    city: { type: String },
+    postalCode: { type: String},
+    country: { type: String },
+  },
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields
 });
