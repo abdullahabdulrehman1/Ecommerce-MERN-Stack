@@ -18,7 +18,6 @@ const AdminDashboard = () => {
               <Typography variant="h6">{authuser?.email}</Typography>
               <Typography variant="h6">{authuser?.id}</Typography>
             </Box>
-            {/* </Grid> */}
           </div>
         </div>
       </div>

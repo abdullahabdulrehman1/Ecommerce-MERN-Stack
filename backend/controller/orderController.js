@@ -4,7 +4,6 @@ import Stripe from "stripe";
 import ordermodel from "../models/ordermodel.js";
 import url from "../helpers/url.js";
 import dotenv from "dotenv";
-// import Order from "../../frontend/src/components/pages/user/order.jsx";
 
 dotenv.config();
 const privatekey = process.env.Stripe_Secret_Key;
@@ -18,10 +17,8 @@ export const createOrderController = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      shipping_address_collection:
-      {
-        allowed_countries: ['US', 'CA', 'PK'],
-        
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA", "PK"],
       },
       line_items: products.map((product) => {
         return {
@@ -30,37 +27,34 @@ export const createOrderController = async (req, res) => {
             product_data: {
               name: product.name,
             },
-            unit_amount: (product.price) * 100,
+            unit_amount: product.price * 100,
           },
           quantity: product.salequantity,
-        
         };
       }),
-    
-      success_url: `${url}/`,
+
+      success_url: `${url}/cart`,
       cancel_url: `${url}/cart`,
     });
-    // console.log(status);
-    // If session creation is successful, store order details in Order model
     const order = new ordermodel({
       user: String(user.id), // Assuming user._id is available
       email: user.email,
       name: user.name,
       ispaid: session.payment_status,
-      
+
       products: products.map((product) => ({
         ...product,
         quantity: product.salequantity, // Add quantity field
       })),
       total: total,
-      
+
       stripeSession: session.id, // Store Stripe session ID for reference
     });
-    
+
     await order.save();
-    
+
     console.log(session.payment_status);
-        
+
     res.status(200).json({ id: session.id, order: order });
   } catch (error) {
     // If session creation fails, respond with error message
@@ -82,14 +76,16 @@ export const getOrderByIdController = async (req, res) => {
 
 export const updateOrderToPaidController = async (req, res) => {
   try {
-    console.log(req.params.id)
+    console.log(req.params.id);
     const order = await ordermodel.findById(req.params.id);
-    
+
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: "Order not found" });
     }
-    const session = await stripe.checkout.sessions.retrieve(order.stripeSession);
- 
+    const session = await stripe.checkout.sessions.retrieve(
+      order.stripeSession
+    );
+
     order.ispaid = session.payment_status;
     order.paidAt = Date.now();
     order.paymentResult = {
@@ -98,23 +94,23 @@ export const updateOrderToPaidController = async (req, res) => {
       update_time: req.body.update_time,
       email_address: req.body.payer ? req.body.payer.email_address : undefined,
     };
-    
+
     // Get the delivery details
     const deliveryDetails = session.shipping_details;
     console.log(deliveryDetails.address.city);
     // You can now use deliveryDetails.name, deliveryDetails.phone, and deliveryDetails.address
-     order.shippingAddress = {
+    order.shippingAddress = {
       line1: deliveryDetails.address.line1,
       city: deliveryDetails.address.city,
       postalCode: deliveryDetails.address.postal_code,
       country: deliveryDetails.address.country,
     };
     const updatedOrder = await order.save();
-  
+
     res.status(200).json(updatedOrder);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 export const getMyOrdersController = async (req, res) => {
@@ -135,10 +131,25 @@ export const getOrdersController = async (req, res) => {
     res.status(400).json("Server Error");
   }
 };
+export const getAdminOrders = async (req, res) => {
+  try {
+    // const { id } = req.params;
+
+    const orders = await ordermodel
+      .find({})
+      .populate("products", "-photo -products")
+      .populate("user", "name");
+    res.json(orders);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json("Server Error");
+  }
+};
 export default {
   createOrderController,
   getOrderByIdController,
   updateOrderToPaidController,
   getMyOrdersController,
   getOrdersController,
+  getAdminOrders,
 };

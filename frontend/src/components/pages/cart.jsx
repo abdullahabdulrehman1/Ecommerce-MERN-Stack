@@ -53,11 +53,6 @@ const Cart = () => {
 
   const makeOrder = async () => {
     const stripe = await loadStripe(`${publicstripekey}`);
-    // const stripe = {
-    //   products: cartItems,
-    //   total: total,
-    // };
-    // const body = { products: cartItems, total: total };
     const headers = {
       "content-type": "application/json",
     };
@@ -66,7 +61,6 @@ const Cart = () => {
     const res = await axios.post(`${url}/order/createorder`, {
       products: cartItems,
       total: total,
-      
       user: authuser,
     });
     console.log(res.data.id);
@@ -76,12 +70,14 @@ const Cart = () => {
     console.log(result);
 
     if (res.status === 200) {
-      toast.success("Order Placed Successfully");
       clearCart();
+      console.log("orderplaced")
+      toast.success("Order Placed Successfully");
     } else {
       toast.error("Order Not Placed");
       console.log(res);
     }
+    clearCart();
   };
   const AuthCheck = async () => {
     try {
@@ -310,6 +306,7 @@ const Cart = () => {
                         if (cartItems.length === 0) {
                           toast.error("Cart is empty");
                         } else {
+                         
                           makeOrder();
                         }
                       }}

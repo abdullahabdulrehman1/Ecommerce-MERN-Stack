@@ -26,6 +26,7 @@ import Order from "./components/pages/user/order";
 import UserProfile from "./components/pages/user/profile";
 import AllProducts from "./components/pages/admin/allproducts";
 import Cart from "./components/pages/cart";
+import AdminOrders from "./components/pages/admin/adminorders";
 const App = () => {
   return (
     <BrowserRouter>
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="admin/create-product" element={<CreateProduct />} />
           <Route path="admin/allusers" element={<User />} />
           <Route path="admin/all-products" element={<AllProducts />} />
+          <Route path="admin/all-orders" element={<AdminOrders />} />
         </Route>
 
         <Route path="/about" element={<About />} />

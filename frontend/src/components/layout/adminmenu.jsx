@@ -1,4 +1,3 @@
-// import { List } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import * as React from "react";
 import Box from "@mui/material/Box";
@@ -8,17 +7,13 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-const   AdminMenu = () => {
+const AdminMenu = () => {
   return (
     <div className="">
-      <Box >
-        <nav aria-label="main mailbox folders" style={{border: 'none'}}>
-          <List  >
-
-            <ListItemText 
-              // sx={{ my: 0 }}
+      <Box>
+        <nav aria-label="main mailbox folders" style={{ border: "none" }}>
+          <List>
+            <ListItemText
               primary="Admin Panel"
               primaryTypographyProps={{
                 fontSize: 40,
@@ -29,7 +24,7 @@ const   AdminMenu = () => {
               }}
               sx={{ textAlign: "center" }}
             />
-            <NavLink to="/dashboard/admin/create-category" >
+            <NavLink to="/dashboard/admin/create-category">
               <ListItem>
                 <ListItemButton>
                   <ListItemText
@@ -57,7 +52,7 @@ const   AdminMenu = () => {
               <ListItem>
                 <ListItemButton>
                   <ListItemText
-                    primary="All User"
+                    primary="All Users"
                     secondary="See All Users"
                     sx={{ textAlign: "center" }}
                   />
@@ -65,6 +60,19 @@ const   AdminMenu = () => {
               </ListItem>
             </NavLink>
             <Divider />
+            <NavLink to="/dashboard/admin/all-orders">
+              <ListItem>
+                <ListItemButton>
+                  <ListItemText
+                    primary="All Orders"
+                    secondary="See All Ordered Products"
+                    sx={{ textAlign: "center" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+            <Divider />
+
             <NavLink to="/dashboard/admin/all-products">
               <ListItem>
                 <ListItemButton>
@@ -83,3 +91,4 @@ const   AdminMenu = () => {
   );
 };
 export default AdminMenu;
+  
