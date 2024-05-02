@@ -151,13 +151,18 @@ const CreateCategory = () => {
       renderCell: (params) => {
         return (
           <Button
+            style={{
+              // width: "20%",
+              backgroundColor: "#212121DF", // This is equivalent to grey[900] in Material-UI
+              color: "white",
+            }}
             onClick={(e) => {
               setdisable(params.row.id);
               onButtonClick(e, params.row);
               deleteCategory(params.row.id);
             }}
             disabled={disable === params.row.id}
-            variant="contained"
+            variant="outlined"
           >
             Delete
           </Button>
@@ -201,9 +206,12 @@ const CreateCategory = () => {
                 />
                 <Button
                   variant="outlined"
-                  style={{ width: "20%" }}
+                  style={{
+                    width: "20%",
+                    backgroundColor: "#212121DF", // This is equivalent to grey[900] in Material-UI
+                    color: "white",
+                  }}
                   onClick={handleCategory}
-                  color="primary"
                 >
                   Create
                 </Button>
@@ -217,7 +225,7 @@ const CreateCategory = () => {
                   minHeight={300}
                   sx={{ marginY: 2 }}
                 >
-                  <CircularProgress />
+                  <CircularProgress style={{ color: "#616161" }} />{" "}
                 </Box>
               ) : (
                 <Box>

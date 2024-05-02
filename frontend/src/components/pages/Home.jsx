@@ -35,12 +35,20 @@ import { CartContext } from "../../context/cartContex";
 import { useContext } from "react";
 import Modal from "@mui/material/Modal";
 import { motion, AnimatePresence } from "framer-motion";
+import { grey } from "@mui/material/colors";
 // import { useCartContext } from "../../context/cartContex.jsx";
 
 export const Home = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpenModal = () => setOpen(true);
   const [popLayout, setPopLayout] = useState(false);
+  const controlProps = (item) => ({
+    checked: selectedValue === item,
+    onChange: handleChange,
+    value: item,
+    name: "color-radio-button-demo",
+    inputProps: { "aria-label": item },
+  });
 
   const handleCloseModal = () => setOpen(false);
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
@@ -204,10 +212,12 @@ export const Home = () => {
     }
     setChecked(all);
   };
+
   // console.log(checked);
   const [radio, setRadio] = useState("");
   const [minPrice, maxPrice] = radio.split(",").map(Number);
   console.log(radio);
+
   const filterproduct = async () => {
     try {
       const response = await axios.post(`${url}/product/productfilter`, {
@@ -383,7 +393,7 @@ export const Home = () => {
                   overflow: "auto",
                   margin: 2,
                   padding: 4,
-                 
+
                   backgroundColor: "rgba(257, 255, 260, 1)",
                 }}
               >
@@ -471,6 +481,11 @@ export const Home = () => {
                           {/* {  !cartItems.find(item => item.id === product.id) ? ():} */}
                           <Button
                             variant="solid"
+                            style={{ 
+                             
+                              backgroundColor: "#212121", // This is equivalent to grey[900] in Material-UI
+                              color: "white" 
+                            }}
                             sx={{ mt: 2, ml: 4 }}
                             onClick={() => {
                               addToCart(singleProduct);
@@ -609,7 +624,7 @@ export const Home = () => {
             <TextField
               type="text"
               variant="outlined"
-              color="primary"
+              color="grey"
               label="Search Products"
               onChange={(e) => setSearch(e.target.value)}
               value={search}
@@ -631,6 +646,12 @@ export const Home = () => {
                               onChange={(e) =>
                                 handlefilter(e.target.checked, category.id)
                               }
+                              sx={{
+                                color: grey[800],
+                                "&.Mui-checked": {
+                                  color: grey[900],
+                                },
+                              }}
                             />
                           }
                           label={`${category.name}`}
@@ -651,7 +672,14 @@ export const Home = () => {
               <RadioGroup
                 value={radio}
                 onChange={(e) => setRadio(e.target.value)}
+                sx={{
+                  color: grey[800],
+                  "&.Mui-checked": {
+                    color: grey[600],
+                  },
+                }}
                 name="radio-buttons-group"
+                color="grey"
               >
                 {prices?.map((price) => {
                   return (
@@ -663,7 +691,17 @@ export const Home = () => {
                       >
                         <FormControlLabel
                           value={price.array.join(",")}
-                          control={<Radio />}
+                          control={
+                            <Radio
+                              sx={{
+                                color: grey[800],
+                                "&.Mui-checked": {
+                                  color: grey[900],
+                                },
+                              }}
+                            />
+                          }
+                          color="grey"
                           label={price.name}
                         />
                       </Collapse>
@@ -673,7 +711,7 @@ export const Home = () => {
               </RadioGroup>
             </Box>
             <Button
-              sx={{ mt: 2, ml: 2 }}
+              sx={{ mt: 2, ml: 2, backgroundColor: grey[900] }}
               level="contained"
               onClick={() => window.location.reload()}
             >
@@ -737,7 +775,7 @@ export const Home = () => {
                             }}
                             variants={variants}
                             exit={{ scale: 0.7, opacity: 0 }}
-                            transition={{ type: "spring",duration: 0.5 }}
+                            transition={{ type: "spring", duration: 0.5 }}
                             key={product._id}
                           >
                             <Stack
@@ -813,9 +851,11 @@ export const Home = () => {
                                 </CardContent>
 
                                 <CardOverflow
+                                
                                   onClick={() => addToCart(product)}
                                 >
                                   <Button
+                                  
                                     variant="solid"
                                     sx={{ backgroundColor: "#1D1F1D" }}
                                     size="lg"
@@ -845,7 +885,7 @@ export const Home = () => {
                   count={Math.ceil(product.length / itemperpage)}
                   page={page}
                   onChange={handleChange}
-                  color="primary"
+                  color="grey"
                 />
               )}
             </Box>

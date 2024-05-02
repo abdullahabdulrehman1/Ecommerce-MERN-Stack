@@ -226,7 +226,7 @@ const Login = () => {
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-lg font-bold ">{error}</div>
+                  <div className="text-grey-900 text-lg font-bold ">{error}</div>
                 )}
 
                 <button>

@@ -57,8 +57,13 @@ const User = () => {
               deleteUser(params.row.id);
               setdisable(params.row.id);
             }}
+            
             disabled={params.row.role === "1" || params.row.id === disable}
             variant="contained"
+            style={{ 
+              backgroundColor: (params.row.role === "1" || params.row.id === disable) ? "#D3D3D3" : "#212121", // Check if the button is disabled
+              color: "white" 
+            }}
           >
             Delete
           </Button>

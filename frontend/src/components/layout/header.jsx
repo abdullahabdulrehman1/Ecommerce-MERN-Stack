@@ -3,7 +3,7 @@ import { MdShoppingCart } from "react-icons/md";
 import { AiOutlineLogin } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/authRoute";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { CartContext } from "../../context/cartContex";
 const Header = () => {
   const { authuser, setauthuser, isloggedin, setisloggedin } = useAuth();
@@ -68,28 +68,29 @@ const Header = () => {
             } w-full md:block md:w-auto`}
             id="navbar-default"
           >
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white ">
+            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50  md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white ">
               <li>
-                <Link
+                <NavLink
                   to="/"
-                  className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                  className="block py-2 pl-3 pr-4   rounded md:bg-transparent md:p-0 md:hover:text-blue-700  text-grey-900"
                   aria-current="page"
                 >
                   Home
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to={`/dashboard/${
                     Number(authuser.role) == 1 ? "admin" : "user"
                   }`}
+                  activeClassName="text-red-500"
                   className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0    "
                 >
                   Dashboard
-                </Link>
+                </NavLink>
               </li>
               <li className="">
-                <Link
+                <NavLink
                   to="/cart"
                   className="flex flex-wrap align-center py-0 pl-3 pr-4 relative   text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                 >
@@ -98,7 +99,7 @@ const Header = () => {
                     <MdShoppingCart />
                   </span>
                   {cartItems ? (
-                    <span className="absolute right-0 top-0 md:translate-x-5 sm:translate-x-0  rounded-full bg-red-600 w-7 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+                    <span className="absolute right-0 top-0 md:translate-x-5 sm:translate-x-0  rounded-full bg-gray-800 w-7 h-4 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
                       {cartItems.length && cartItems.length >= 99
                         ? "99+"
                         : cartItems.length}
@@ -106,21 +107,21 @@ const Header = () => {
                   ) : (
                     <></>
                   )}
-                </Link>
+                </NavLink>
               </li>
               {!isloggedin ? (
                 <>
                   {" "}
                   <li>
-                    <Link
+                    <NavLink
                       to="/register"
                       className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                     >
                       Register
-                    </Link>
+                    </NavLink>
                   </li>
                   <li>
-                    <Link
+                    <NavLink
                       to="/login"
                       className="flex py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 "
                     >
@@ -129,7 +130,7 @@ const Header = () => {
                         <AiOutlineLogin />{" "}
                       </span>
                       Login
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               ) : (
@@ -140,7 +141,7 @@ const Header = () => {
                       window.location.reload();
                     }}
                   >
-                    <Link
+                    <NavLink
                       to="/"
                       className="flex py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
                     >
@@ -149,7 +150,7 @@ const Header = () => {
                         <AiOutlineLogin />{" "}
                       </span>
                       Logout
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               )}

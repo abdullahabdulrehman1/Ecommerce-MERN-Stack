@@ -12,7 +12,7 @@ export const createProductController = async (req, res) => {
       price,
       category,
       quantity,
-      shipping,
+
       salequantity,
     } = req.fields;
 
@@ -45,12 +45,6 @@ export const createProductController = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Quantity is required" });
-    }
-
-    if (!shipping) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Shipping is required" });
     }
 
     if (!photo) {
@@ -318,7 +312,7 @@ export const getSimilarProductController = async (req, res) => {
 
 export const fetchProductsCart = async (req, res) => {
   try {
-const { id } = req.query;    // Convert productIds to an array if it's not
+    const { id } = req.query; // Convert productIds to an array if it's not
     const productIdsArray = Array.isArray(productIds)
       ? productIds
       : [productIds];

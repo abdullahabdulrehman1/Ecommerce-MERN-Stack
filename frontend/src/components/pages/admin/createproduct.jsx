@@ -76,7 +76,6 @@ const CreateProduct = () => {
       formData.append("description", description);
       formData.append("price", price);
       formData.append("quantity", quantity);
-      formData.append("shipping", shipping);
       formData.append("photo", photo);
       axios.defaults.headers.common["Authorization"] = token;
       const response = await axios.post(
@@ -92,7 +91,6 @@ const CreateProduct = () => {
         setPrice("");
         setCategory("");
         setQuantity("");
-        setShipping("");
         setPhoto("");
       }
     } catch (error) {
@@ -101,7 +99,6 @@ const CreateProduct = () => {
       console.log("handleSubmit function error: " + error);
     }
   };
-  // console.log(shipping)
   return (
     <Layout title={"Ecommerce | Create-Category"}>
       <div className="container border border-black mx-auto rounded-lg">
@@ -122,7 +119,7 @@ const CreateProduct = () => {
                 minHeight={300}
                 sx={{ marginY: 2 }}
               >
-                <CircularProgress />
+                <CircularProgress style={{ color: "#616161" }} />
               </Box>
             ) : (
               <FormControl
@@ -133,11 +130,17 @@ const CreateProduct = () => {
                   justifyContent: "center",
                 }}
               >
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <InputLabel
+                  style={{ color: "#616161" }}
+                  id="demo-simple-select-label"
+                >
+                  Category
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={category}
+                  color="grey"
                   label="Category"
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -160,7 +163,7 @@ const CreateProduct = () => {
                     <TextField
                       type="text"
                       variant="outlined"
-                      color="secondary"
+                      color="grey"
                       label="Product Name"
                       onChange={(e) => setName(e.target.value)}
                       value={name}
@@ -168,50 +171,11 @@ const CreateProduct = () => {
                       fullWidth
                       required
                     />
-                    <Stack
-                      direction="row"
-                      alignItems={{ lg: "center", md: "center", sm: "center" }}
-                      justifyContent={{ md: "start", sm: "start" }}
-                      gap={1}
-                    >
-                      <FormLabel>Shipping</FormLabel>
-                      <RadioGroup
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        // defaultValue="true"
-                        name="radio-buttons-group"
-                        value={shipping}
-                        sx={{ my: 0 }}
-                        onChange={(e) => setShipping(e.target.value)}
-                        // onClick={}
-                      >
-                        <Stack
-                          direction="row"
-                          alignItems={{
-                            lg: "center",
-                            md: "start",
-                            sm: "start",
-                          }}
-                          justifyContent={{ md: "start", sm: "center" }}
-                          gap={1}
-                        >
-                          <FormControlLabel
-                            value="true"
-                            control={<Radio />}
-                            label="Yes"
-                          />
-                          <FormControlLabel
-                            value="false"
-                            control={<Radio />}
-                            label="No"
-                          />
-                        </Stack>
-                      </RadioGroup>
-                    </Stack>
                   </Stack>
                   <TextField
                     type="text"
                     variant="outlined"
-                    color="secondary"
+                    color="grey"
                     label="Product Description"
                     multiline
                     onChange={(e) => setDescription(e.target.value)}
@@ -242,7 +206,13 @@ const CreateProduct = () => {
                           sx={{
                             p: { sm: 2, xs: 0 },
                             border: { sm: "1px solid black ", xs: "none" },
-                            borderRadius: { sm: "20px", xs: "none" },
+                            borderRadius: { sm: "10px", xs: "none" },
+                          }}
+                          style={{
+                            // width: "20%",
+                            backgroundColor: "#212121DF", // This is equivalent to grey[900] in Material-UI
+                            color: "white",
+                            outline: "none",
                           }}
                           textOverflow={"clip"}
                           display={"inline"}
@@ -288,11 +258,12 @@ const CreateProduct = () => {
                         md: { width: "50%" },
                         sm: { width: "100%" },
                       }}
+                      color="grey"
                       onChange={(e) => setPrice(e.target.value)}
                       value={price}
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">$</InputAdornment>
+                          <InputAdornment position="start">PKR</InputAdornment>
                         ),
                       }}
                       variant="outlined"
@@ -301,6 +272,7 @@ const CreateProduct = () => {
 
                     <TextField
                       label="Quantity"
+                      color="grey"
                       sx={{
                         mb: 4,
                         md: { width: "50%" },
@@ -309,7 +281,7 @@ const CreateProduct = () => {
                       onChange={(e) => setQuantity(e.target.value)}
                       InputProps={{
                         endAdornment: (
-                          <InputAdornment position="start">kg</InputAdornment>
+                          <InputAdornment position="start"></InputAdornment>
                         ),
                       }}
                       value={quantity}
@@ -320,7 +292,12 @@ const CreateProduct = () => {
 
                   <Button
                     variant="outlined"
-                    color="secondary"
+                    style={{
+                      // width: "20%",
+                      backgroundColor: "#212121DF", // This is equivalent to grey[900] in Material-UI
+                      color: "white",
+                      outline: "none",
+                    }}
                     type="submit"
                     onClick={handleSubmit}
                     sx={{ mb: 2 }}

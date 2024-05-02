@@ -364,7 +364,7 @@ const AllProducts = () => {
                         minHeight={300}
                         sx={{ marginY: 2 }}
                       >
-                        <CircularProgress />
+                        <CircularProgress style={{ color: "#616161" }} />
                       </Box>
                     ) : (
                       <FormControl
@@ -375,13 +375,17 @@ const AllProducts = () => {
                           justifyContent: "center",
                         }}
                       >
-                        <InputLabel id="demo-simple-select-label">
+                        <InputLabel
+                          id="demo-simple-select-label"
+                          style={{ color: "#616161" }}
+                        >
                           Category
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
                           value={category}
+                          color="grey"
                           label="Category"
                           onChange={(e) => setCategory(e.target.value)}
                         >
@@ -416,72 +420,18 @@ const AllProducts = () => {
                             <TextField
                               type="text"
                               variant="outlined"
-                              color="secondary"
+                              color="grey"
                               label="Product Name"
                               onChange={(e) => setName(e.target.value)}
                               value={name}
                               fullWidth
                               required
                             />
-                            <Stack
-                              direction={{
-                                md: "row",
-                                sm: "column",
-                                xs: "column",
-                              }}
-                              alignItems={{
-                                lg: "center",
-                                md: "center",
-                                sm: "start",
-                                xs: "start",
-                              }}
-                              justifyContent={{
-                                md: "start",
-                                sm: "start",
-                                xs: "start",
-                              }}
-                              gap={1}
-                            >
-                              <FormLabel>Shipping</FormLabel>
-                              <RadioGroup
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                name="radio-buttons-group"
-                                value={shipping}
-                                sx={{ my: 0 }}
-                                onChange={(e) => setShipping(e.target.value)}
-                              >
-                                <Stack
-                                  direction={{
-                                    md: "row",
-                                    sm: "column",
-                                    xs: "column",
-                                  }}
-                                  alignItems={{
-                                    lg: "center",
-                                    md: "start",
-                                    sm: "start",
-                                  }}
-                                  justifyContent={{ md: "start", sm: "center" }}
-                                  gap={1}
-                                >
-                                  <FormControlLabel
-                                    value="true"
-                                    control={<Radio />}
-                                    label="Yes"
-                                  />
-                                  <FormControlLabel
-                                    value="false"
-                                    control={<Radio />}
-                                    label="No"
-                                  />
-                                </Stack>
-                              </RadioGroup>
-                            </Stack>
                           </Stack>
                           <TextField
                             type="text"
                             variant="outlined"
-                            color="secondary"
+                            color="grey"
                             label="Product Description"
                             multiline
                             onChange={(e) => setDescription(e.target.value)}
@@ -518,8 +468,14 @@ const AllProducts = () => {
                                       sm: "1px solid black ",
                                       xs: "none",
                                     },
-                                    borderRadius: { sm: "20px", xs: "none" },
+                                    borderRadius: { sm: "10px", xs: "none" },
                                     cursor: "pointer",
+                                  }}
+                                  style={{
+                                    // width: "20%",
+                                    backgroundColor: "#212121DF", // This is equivalent to grey[900] in Material-UI
+                                    color: "white",
+                                    outline: "none",
                                   }}
                                   textOverflow={"clip"}
                                   display={"inline"}
@@ -578,7 +534,7 @@ const AllProducts = () => {
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
-                                    $
+                                    PKR
                                   </InputAdornment>
                                 ),
                               }}
@@ -596,9 +552,7 @@ const AllProducts = () => {
                               onChange={(e) => setQuantity(e.target.value)}
                               InputProps={{
                                 endAdornment: (
-                                  <InputAdornment position="start">
-                                    kg
-                                  </InputAdornment>
+                                  <InputAdornment position="start"></InputAdornment>
                                 ),
                               }}
                               value={quantity}
@@ -662,7 +616,7 @@ const AllProducts = () => {
                 minHeight={300}
                 sx={{ marginY: 2 }}
               >
-                <CircularProgress />
+                <CircularProgress style={{ color: "#616161" }} />
               </Box>
             ) : (
               <Box
@@ -763,7 +717,7 @@ const AllProducts = () => {
                   count={Math.ceil(product.length / itemperpage)}
                   page={page}
                   onChange={handleChange}
-                  color="primary"
+                  color="grey"
                 />
               )}
             </Box>
