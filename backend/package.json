@@ -4,11 +4,8 @@
   "description": "ecommerce rest api",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "server": "node server.js",
-    "client": "npm run dev  --prefix /workspaces/Login_Authentication_JWT/frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "proxy": "http//192.168.1.33:5174"
+    "start": "node server.js"
+   
   },
   "keywords": [],
   "type": "module",
