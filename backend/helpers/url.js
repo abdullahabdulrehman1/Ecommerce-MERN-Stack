@@ -1,2 +1,2 @@
-export const url = "http://192.168.1.65:5173"
+export const url = "https://ecommerce-mern-stack-mu.vercel.app"
 export default url;
