@@ -33,8 +33,8 @@ export const createOrderController = async (req, res) => {
         };
       }),
 
-      success_url: `${url}/cart`,
-      cancel_url: `${url}/cart`,
+      success_url: `${url}/`,
+      cancel_url: `${url}/`,
     });
     const order = new ordermodel({
       user: String(user.id), // Assuming user._id is available
