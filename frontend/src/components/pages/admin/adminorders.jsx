@@ -149,10 +149,10 @@ const AdminOrders = () => {
           className="row grid grid-cols-12 row-span-2 justify-between"
           style={{ minHeight: "80vh" }}
         >
-          <div className="lg:col-span-3 md:col-span-12 sm:col-span-12 xs:col-span-12 col-span-12 row-span-1 border ">
+          <div className="lg:col-span-3 md:col-span-3 col-span-12 row-span-1 border ">
             <AdminMenu />
           </div>
-          <div className="lg:col-span-9 md:col-span-9 flex-col ml-10 flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
+          <div className="lg:col-span-9 md:col-span-9 flex-col  ml-10  flex-wrap  col-span-12 sm:px-2    md:px-5 lg:px-10 pt-2 ">
             {order === null ? (
               <Typography level="h3" fontWeight="thin" sx={{ my: 3, mx: 2 }}>
                 All Orders
