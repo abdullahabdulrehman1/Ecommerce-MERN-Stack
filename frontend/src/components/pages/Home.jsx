@@ -481,10 +481,9 @@ export const Home = () => {
                           {/* {  !cartItems.find(item => item.id === product.id) ? ():} */}
                           <Button
                             variant="solid"
-                            style={{ 
-                             
+                            style={{
                               backgroundColor: "#212121", // This is equivalent to grey[900] in Material-UI
-                              color: "white" 
+                              color: "white",
                             }}
                             sx={{ mt: 2, ml: 4 }}
                             onClick={() => {
@@ -741,7 +740,12 @@ export const Home = () => {
                 sx={{
                   display: "inline-list-item",
                   flexWrap: "wrap",
-                  justifyContent: "start",
+                  justifyContent: {
+                    xs: "center",
+                    sm: "start",
+                    md: "start",
+                    lg: "start",
+                  },
                   alignContent: "center",
                 }}
                 flexGrow={1}
@@ -851,11 +855,9 @@ export const Home = () => {
                                 </CardContent>
 
                                 <CardOverflow
-                                
                                   onClick={() => addToCart(product)}
                                 >
                                   <Button
-                                  
                                     variant="solid"
                                     sx={{ backgroundColor: "#1D1F1D" }}
                                     size="lg"

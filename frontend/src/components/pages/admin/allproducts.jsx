@@ -624,7 +624,12 @@ const AllProducts = () => {
                 sx={{
                   display: "inline-list-item",
                   flexWrap: "wrap",
-                  justifyContent: "start",
+                  justifyContent: {
+                    xs: "center",
+                    sm: "start",
+                    md: "start",
+                    lg: "start",
+                  },
                   alignContent: "center",
                 }}
                 gap={5}
