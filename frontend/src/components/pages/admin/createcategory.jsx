@@ -53,9 +53,9 @@ const CreateCategory = () => {
   const handleCategory = async (event) => {
     event.preventDefault();
     if (category === "") return toast.error("Category cannot be empty");
-    const regex = /^[a-zA-Z _-]+$/i;
+    const regex = /^[a-zA-Z_-]+$/i;
     if (!regex.test(category))
-      return toast.error("Category cannot contain special characters");
+      return toast.error("Category cannot contain special characters and Spaces");
 
     try {
       const token = localStorage.getItem("token");
