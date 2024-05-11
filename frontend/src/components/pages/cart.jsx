@@ -30,6 +30,8 @@ const Cart = () => {
 
   const [loading, setLoading] = useState(false);
   const [success, setsuccess] = useState(false);
+  const [sessionCreated, setSessionCreated] = useState(false);
+  const [isOrdering, setIsOrdering] = useState(false);
   const variants = {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
@@ -52,6 +54,10 @@ const Cart = () => {
   const token = localStorage.getItem("token");
 
   const makeOrder = async () => {
+    if (sessionCreated) {
+      return;
+    }
+    else{
     const stripe = await loadStripe(`${publicstripekey}`);
     const headers = {
       "content-type": "application/json",
@@ -64,6 +70,8 @@ const Cart = () => {
       user: authuser,
     });
     console.log(res.data.id);
+    setSessionCreated(true);
+
     const result = await stripe.redirectToCheckout({
       sessionId: res.data.id,
     });
@@ -77,7 +85,7 @@ const Cart = () => {
       toast.error("Order Not Placed");
       console.log(res);
     }
-    clearCart();
+    clearCart();}
   };
   const AuthCheck = async () => {
     try {
@@ -299,18 +307,23 @@ const Cart = () => {
                   className="mt-6 text-center"
                 >
                   {isloggedin ? (
-                    <button
-                      type="button"
-                      className="group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
-                      onClick={() => {
-                        if (cartItems.length === 0) {
-                          toast.error("Cart is empty");
-                        } else {
-                         
-                          makeOrder();
-                        }
-                      }}
-                    >
+                   <button
+                   type="button"
+                   disabled={isOrdering || sessionCreated}
+                   className={`group inline-flex w-full items-center justify-center rounded-md bg-gray-800 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800 ${isOrdering || sessionCreated ? 'opacity-50 cursor-not-allowed' : ''}`}
+                   onClick={async () => {
+                     if (cartItems.length === 0) {
+                       toast.error("Cart is empty");
+                     } else {
+                       setIsOrdering(true);
+                       try {
+                         await makeOrder();
+                       } finally {
+                         setIsOrdering(false);
+                         setIsOrdering(false);
+                       }
+                     }
+                   }}>
                       Place Order
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
