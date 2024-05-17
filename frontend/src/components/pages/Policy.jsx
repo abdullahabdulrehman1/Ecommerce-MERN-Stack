@@ -9,7 +9,7 @@ const Policy = () => {
       <Layout title={"Privacy Policy | Ecommerce"}>
         <div className="container  flex flex-wrap mb-4 justify-center  mx-auto rounded-xl p-5  border border-gray-800  mt-10">
           <img
-            src="/public/aboutus.jpg"
+            src="aboutus.jpg"
             className=" w-full h-50  lg:w-1/3 rounded-xl "
           />
           <div className="  w-full lg:w-1/2 lg:ml-5">

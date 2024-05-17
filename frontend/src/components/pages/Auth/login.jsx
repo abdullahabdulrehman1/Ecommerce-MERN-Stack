@@ -18,11 +18,17 @@ const Login = () => {
     autoplay: true,
     stateMachines: STATE_MACHINE_NAME,
   });
+
   const variants = {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
   };
 
+  useEffect(() => {
+    import('rive-react').then((rive) => {
+      setRiveComponent(() => rive.RiveComponent);
+    });
+  }, []);
   useEffect(() => {
     setLook();
   }, [FormData]);
@@ -140,6 +146,7 @@ const Login = () => {
     }
   };
 
+  
   return (
     <Layout title={"Login | Ecommerce"}>
       <div className=" light:bg-white-500">

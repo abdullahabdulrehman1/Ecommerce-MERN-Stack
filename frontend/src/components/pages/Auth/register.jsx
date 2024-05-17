@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../layout/layout";
-import dotenv from "dotenv";
-
 import { ToastContainer, toast } from "react-toastify";
 import { useRive, useStateMachineInput } from "rive-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
@@ -18,6 +16,11 @@ const Register = () => {
     autoplay: true,
     stateMachines: STATE_MACHINE_NAME,
   });
+  useEffect(() => {
+    import("rive-react").then((rive) => {
+      setRiveComponent(() => rive.RiveComponent);
+    });
+  }, []);
   const variants = {
     initial: { perspective: 0 },
     animate: { perspective: 1000 },
@@ -98,27 +101,21 @@ const Register = () => {
     event.preventDefault();
 
     const { name, email, password, question } = formData;
-    // Check if name, email, and password are not empty
     if (!name || !email || !password || !question) {
-      // toast.error("Please fill in all fields.");
       setError("Please fill in all fields.");
       return;
     }
 
-    // Create a data object to send to the server
     const data = {
       name,
       question,
       email,
       password,
-      // question,
     };
 
     const res = axios
       .post(`${url}/auth/register`, data)
       .then((response) => {
-        // Handle success - you can redirect or show a success message
-
         setFormData({
           name: "",
           email: "",
@@ -131,13 +128,11 @@ const Register = () => {
       })
       .catch((error) => {
         toast.error(`${error.response.data.message}`);
-        // Handle errors - display an error message using toast
         setError(`${error.response.data.message}`);
       });
   };
   const [popLayout, setPopLayout] = useState(false);
 
-  // const er='';
   return (
     <Layout title={"Registeration | Ecommerce"}>
       <div className="  light:bg-white-500">
@@ -235,8 +230,7 @@ const Register = () => {
                       id="password"
                       value={formData.password}
                       onFocus={() => setHangUp(false)}
-                    
-                    onMouseLeave={() => setHangUp(false)}
+                      onMouseLeave={() => setHangUp(false)}
                       onChange={(event) => {
                         handleChange(event);
                         setHangUp(true);
@@ -271,7 +265,20 @@ const Register = () => {
                       </span>
                     )}
                   </h1>
-
+                  <button>
+                    {" "}
+                    <h1
+                      className="ml-1 text-sm  font-bold font-serif w-full  "
+                      onClick={() => {
+                        navigate("/register");
+                      }}
+                    >
+                      have account{" "}
+                      <span className="underline   text-md font-semibold">
+                        Login Now
+                      </span>{" "}
+                    </h1>
+                  </button>
                   <div>
                     <button
                       onMouseOver={() => setHangUp(false)}

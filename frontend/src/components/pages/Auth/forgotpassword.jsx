@@ -45,19 +45,8 @@ const ForgotPassword = () => {
         setTimeout(() => {
           settrueError("");
         }, 2000);
-        // setauth({
-        //   ...auth,
-        //   user: res.data.user,
-        //   token: res.data.token,
-        // });
-        // localStorage.setItem("auth", JSON.stringify(res.data));
         toast.success("Password Changed Successfully");
-        // setError(`${res.data.message}`);
-        // if (location.state && location.state.from === "/dashboard") {
-        //   navigate("/dashboard");
-        // } else {
         navigate("/login");
-        // }
       } else {
         setError(`${res.data.message}`);
         setTimeout(() => {
@@ -83,11 +72,14 @@ const ForgotPassword = () => {
             className="flex items-center mb-6  text-2xl font-semibold text-gray-900 dark:text-white"
           >
             <img
-              className="w-8 h-8 mr-2 rounded-3xl"
-              src="/public/aboutus.jpg"
+              className="w-8 h-8 mr-2 rounded-3xl text-gray-900 "
+              src="aboutus.jpg"
               alt="logo"
             />
-            Ecommerce
+          
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+                Ecommerce
+              </h1>
           </a>
 
           <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  border-gray-700">
@@ -161,10 +153,7 @@ const ForgotPassword = () => {
                 <div>
                   <button
                     type="submit"
-                    // value={submit}
-
-                    // onClick={handleSubmit}
-                    className="w-full py-3  bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
+                    className="w-full py-3 text-white bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
                   >
                     Change Password
                   </button>
