@@ -488,6 +488,7 @@ export const Home = () => {
                             sx={{ mt: 2, ml: 4 }}
                             onClick={() => {
                               addToCart(singleProduct);
+                              toast.success("Product added to cart");
                             }}
                           >
                             Add to Cart
@@ -591,6 +592,7 @@ export const Home = () => {
                                   <CardOverflow
                                     onClick={() => {
                                       addToCart(product);
+                                      toast.success("Product added to cart");
                                     }}
                                   >
                                     <Button
@@ -820,7 +822,6 @@ export const Home = () => {
                                     color="neutral"
                                     textColor="text.primary"
                                     overlay
-                                    // endDecorator={<ArrowOutwardIcon />}
                                   >
                                     {product.name}
                                   </Link>
@@ -855,7 +856,10 @@ export const Home = () => {
                                 </CardContent>
 
                                 <CardOverflow
-                                  onClick={() => addToCart(product)}
+                                  onClick={() => {
+                                    addToCart(product);
+                                    toast.success("Product added to cart");
+                                  }}
                                 >
                                   <Button
                                     variant="solid"

@@ -109,7 +109,7 @@ const Login = () => {
       // const res = await axios.post(`${url}/auth/login`, formData);
       console.log(url);
       const res = await axios.post(`${url}/auth/login`, formData);
-// triggerSuccess();
+      // triggerSuccess();
       // <Spinners />
       if (res && res.data.success === true) {
         triggerSuccess();
@@ -226,20 +226,35 @@ const Login = () => {
                 </div>
 
                 {error && (
-                  <div className="text-grey-900 text-lg font-bold ">{error}</div>
+                  <div className="text-grey-900 text-lg font-bold ">
+                    {error}
+                  </div>
                 )}
 
-                <button>
-                  {" "}
-                  <h1
-                    className="ml-1 text-sm font-bold font-serif w-full  "
-                    onClick={() => {
-                      navigate("/forgotpassword");
-                    }}
-                  >
-                    Forgot Password{" "}
-                  </h1>
-                </button>
+                <div className="flex flex-col-reverse justify-start ">
+                  <button>
+                    {" "}
+                    <h1
+                      className="ml-1 text-sm  font-bold font-serif w-full  "
+                      onClick={() => {
+                        navigate("/register");
+                      }}
+                    >
+                      Register Now{" "}
+                    </h1>
+                  </button>
+                  <button>
+                    {" "}
+                    <h1
+                      className="ml-1 text-sm d-block font-bold font-serif w-full  "
+                      onClick={() => {
+                        navigate("/forgotpassword");
+                      }}
+                    >
+                      Forgot Password{" "}
+                    </h1>
+                  </button>
+                </div>
                 <div>
                   <button
                     onMouseOver={() => setHangUp(false)}
