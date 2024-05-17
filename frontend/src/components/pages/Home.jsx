@@ -228,7 +228,6 @@ export const Home = () => {
         console.log("No products found");
         toast.error("No products found");
         setLoading(false);
-        toast.error("No products found");
       } else if (response.data && response.data.products) {
         setProduct(
           response.data.products.map((product) => {
@@ -734,149 +733,150 @@ export const Home = () => {
                 minHeight={300}
                 sx={{ marginY: 2 }}
               >
-                <Typography level="h4">No products found</Typography>
+                <CircularProgress style={{ color: "#616161" }} />
               </Box>
             ) : (
-              <Box
-                p={2}
-                sx={{
-                  display: "inline-list-item",
-                  flexWrap: "wrap",
-                  justifyContent: {
-                    xs: "center",
-                    sm: "start",
-                    md: "start",
-                    lg: "start",
-                  },
-                  alignContent: "center",
-                }}
-                flexGrow={1}
-                gap={5}
-                flexWrap="wrap"
-              >
+              <>
                 {products.length === 0 && search ? (
-                  <Stack
-                    // display="flex"
+                  <Box
+                    display="flex"
                     justifyContent="center"
-                    marginX={"100px"}
                     alignItems={"center"}
                     minHeight={300}
                     sx={{ marginY: 2 }}
                   >
-                    <Typography level="h4">No products found</Typography>
-                  </Stack>
+                    <CircularProgress style={{ color: "#616161" }} />
+                  </Box>
                 ) : (
-                  <AnimatePresence mode={popLayout ? "popLayout" : "sync"}>
-                    {(products.length !== 0 ? products : product)
-                      ?.slice(start, end)
-                      ?.map((product) => {
-                        return (
-                          <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            layout
-                            initial={{ scale: 0.7, opacity: 0 }}
-                            animate={{
-                              scale: 1,
-                              opacity: 1,
-                            }}
-                            variants={variants}
-                            exit={{ scale: 0.7, opacity: 0 }}
-                            transition={{ type: "spring", duration: 0.5 }}
-                            key={product._id}
-                          >
-                            <Stack
-                              direction="row"
-                              justifyContent={"flex"}
-                              alignItems={"center"}
-                              flexWrap="wrap"
-                              onClick={() => {
-                                handleOpen(product.slug);
+                  <Box
+                    p={2}
+                    sx={{
+                      display: "inline-list-item",
+                      flexWrap: "wrap",
+                      justifyContent: {
+                        xs: "center",
+                        sm: "start",
+                        md: "start",
+                        lg: "start",
+                      },
+                      alignContent: "center",
+                    }}
+                    flexGrow={1}
+                    gap={5}
+                    flexWrap="wrap"
+                  >
+                    <AnimatePresence mode={popLayout ? "popLayout" : "sync"}>
+                      {(products.length !== 0 ? products : product)
+                        ?.slice(start, end)
+                        ?.map((product) => {
+                          return (
+                            <motion.div
+                              whileHover={{ scale: 1.1 }}
+                              layout
+                              initial={{ scale: 0.7, opacity: 0 }}
+                              animate={{
+                                scale: 1,
+                                opacity: 1,
                               }}
+                              variants={variants}
+                              exit={{ scale: 0.7, opacity: 0 }}
+                              transition={{ type: "spring", duration: 0.5 }}
+                              key={product._id}
                             >
-                              <Card
-                                sx={{
-                                  minWidth: 220,
-                                  maxWidth: 220,
-                                  boxShadow: "lg",
-                                }}
+                              <Stack
+                                direction="row"
+                                justifyContent={"flex"}
+                                alignItems={"center"}
+                                flexWrap="wrap"
                                 onClick={() => {
                                   handleOpen(product.slug);
                                 }}
                               >
-                                <CardOverflow>
-                                  <AspectRatio sx={{ minWidth: 220 }}>
-                                    <img
-                                      src={`${url}/product/getphotoproduct/${product._id}`}
-                                      loading="lazy"
-                                      alt=""
-                                    />
-                                  </AspectRatio>
-                                </CardOverflow>
-                                <CardContent onClick={handleOpenModal}>
-                                  <Typography level="body-xs">
-                                    {product.category.name}
-                                  </Typography>
-                                  <Link
-                                    href="#product-card"
-                                    fontWeight="md"
-                                    color="neutral"
-                                    textColor="text.primary"
-                                    overlay
-                                  >
-                                    {product.name}
-                                  </Link>
-
-                                  <Typography
-                                    level="title-lg"
-                                    sx={{ mt: 1, fontWeight: "xl" }}
-                                    endDecorator={
-                                      <Chip
-                                        component="span"
-                                        size="sm"
-                                        variant="soft"
-                                        color="success"
-                                      >
-                                        Lowest price
-                                      </Chip>
-                                    }
-                                  >
-                                    {product.price} PKR
-                                  </Typography>
-                                  <Typography level="body-sm">
-                                    (
-                                    <b>
-                                      {product.availablequantity > 1000
-                                        ? `${(
-                                            product.availablequantity / 1000
-                                          ).toFixed(0)}k`
-                                        : product.availablequantity}
-                                    </b>{" "}
-                                    left in stock!)
-                                  </Typography>
-                                </CardContent>
-
-                                <CardOverflow
+                                <Card
+                                  sx={{
+                                    minWidth: 220,
+                                    maxWidth: 220,
+                                    boxShadow: "lg",
+                                  }}
                                   onClick={() => {
-                                    addToCart(product);
-                                    toast.success("Product added to cart");
+                                    handleOpen(product.slug);
                                   }}
                                 >
-                                  <Button
-                                    variant="solid"
-                                    sx={{ backgroundColor: "#1D1F1D" }}
-                                    size="lg"
+                                  <CardOverflow>
+                                    <AspectRatio sx={{ minWidth: 220 }}>
+                                      <img
+                                        src={`${url}/product/getphotoproduct/${product._id}`}
+                                        loading="lazy"
+                                        alt=""
+                                      />
+                                    </AspectRatio>
+                                  </CardOverflow>
+                                  <CardContent onClick={handleOpenModal}>
+                                    <Typography level="body-xs">
+                                      {product.category.name}
+                                    </Typography>
+                                    <Link
+                                      href="#product-card"
+                                      fontWeight="md"
+                                      color="neutral"
+                                      textColor="text.primary"
+                                      overlay
+                                    >
+                                      {product.name}
+                                    </Link>
+
+                                    <Typography
+                                      level="title-lg"
+                                      sx={{ mt: 1, fontWeight: "xl" }}
+                                      endDecorator={
+                                        <Chip
+                                          component="span"
+                                          size="sm"
+                                          variant="soft"
+                                          color="success"
+                                        >
+                                          Lowest price
+                                        </Chip>
+                                      }
+                                    >
+                                      {product.price} PKR
+                                    </Typography>
+                                    <Typography level="body-sm">
+                                      (
+                                      <b>
+                                        {product.availablequantity > 1000
+                                          ? `${(
+                                              product.availablequantity / 1000
+                                            ).toFixed(0)}k`
+                                          : product.availablequantity}
+                                      </b>{" "}
+                                      left in stock!)
+                                    </Typography>
+                                  </CardContent>
+
+                                  <CardOverflow
+                                    onClick={() => {
+                                      addToCart(product);
+                                      toast.success("Product added to cart");
+                                    }}
                                   >
-                                    Add to cart
-                                  </Button>
-                                </CardOverflow>
-                              </Card>
-                            </Stack>
-                          </motion.div>
-                        );
-                      })}
-                  </AnimatePresence>
+                                    <Button
+                                      variant="solid"
+                                      sx={{ backgroundColor: "#1D1F1D" }}
+                                      size="lg"
+                                    >
+                                      Add to cart
+                                    </Button>
+                                  </CardOverflow>
+                                </Card>
+                              </Stack>
+                            </motion.div>
+                          );
+                        })}
+                    </AnimatePresence>
+                  </Box>
                 )}
-              </Box>
+              </>
             )}
             <Box
               display="flex"

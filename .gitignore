@@ -2,3 +2,4 @@ backend/.env
 
 frontend/src/utils/exporturl.jsx
 backend/helpers/url.js
+.vercel
